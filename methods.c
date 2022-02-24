@@ -11,7 +11,7 @@ void updateConnectedFile(int num)
     f = fopen("numConnected.txt", "w");
     if(f == NULL)
     {
-        printf("error opening file\n");
+        printf("error opening numConnected file in update\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -26,7 +26,69 @@ int getNumConnected()
 	//if file doesnt open, exit
     if(file == NULL)
     {
-        printf("error opening file\n");
+        printf("error opening numConnected file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	//printf("in get function, temp = %i\n", temp);
+    return temp;
+}
+
+void updateOccupiedFile(int num)
+{
+    FILE *f;
+    f = fopen("occupied.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening occupied file in update\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getOccupied()
+{
+	FILE *file;
+    file = fopen("occupied.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening occupied file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	//printf("in get function, temp = %i\n", temp);
+    return temp;
+}
+
+void updateSearchPlayerFile(int num)
+{
+    FILE *f;
+    f = fopen("search.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening occupied file in update\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getSearchPlayerStatus()
+{
+	FILE *file;
+    file = fopen("search.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening occupied file\n");
         exit(1);
     }
 
