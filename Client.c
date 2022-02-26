@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 
 #define PORT 4444
+#define sleepTime 500
 
 int main()
 {
@@ -68,6 +69,7 @@ int main()
     //---------------------------------beginning of client while loop--------------------------------------//
 	while(1)
     {
+		usleep(500);
 		//cleans buffer
 		memset(buffer, 0, 1024);
 
@@ -128,26 +130,88 @@ int main()
 				//would then receive 5 scoreboard streams
 			}
 
-			//singleplayer game process
+			//--------------------------------Single player client-------------------------//
 			else if(strcmp(buffer, "111") == 0)
 			{
 				printf("Singleplayer Game starting \n");
-				for (int i = 0; i < 5; i++)
+				int gameCont = 1;
+				while (gameCont == 1)
 				{
+					memset(buffer, 0, 1024);
+					char buf[1024];
+					//printf("before first send\n");
+					//strcpy(buf, "AMONGUS");
+					//send(clientSocket, buf, strlen(buf), 0);
+					//bzero(buf, sizeof(buf));
+					//sleep(1);
+					//usleep(500);
+					//printf("after first send\n");
+
+					usleep(500);
+					
+					recv(clientSocket, buf, 1024, 0);
+					int code = atoi(buf);
+					//printf("code received is: %i\n", code);
+					if(code == 0)
+					{
+						printf("Game Over\n");
+						usleep(500);
+						recv(clientSocket, buf, 1024, 0);
+						int x = atoi(buf);
+						printf("Your final score was: %i\n", x);
+						gameCont = 0;
+						break;
+					}
+
+
+					//entering word area
 					printf("Enter a word: \t");
 					scanf("%s", &buffer[0]);
 					send(clientSocket, buffer, strlen(buffer), 0);
 
+					//received score for that word
 					recv(clientSocket, buffer, 1024, 0);
 					int score = atoi(buffer);
-					printf("score received: %i\n", score);
+					printf("Score received: %i\n", score);
 				}
+				recv(clientSocket, buffer, 1024, 0);
+				int ifAdd = atoi(buffer);
+				//printf("scoreboard status: %i\n", ifAdd);
+				//if player made it to scoreboard get required information
+				if(ifAdd == 1)
+				{
+					printf("congratulations, you made it to the scoreboard\n");
+					printf("Enter your first name:\t");
+					scanf("%s", &buffer[0]);
+					usleep(500);
+					send(clientSocket, buffer, strlen(buffer), 0);
+
+					printf("Enter your last name:\t");
+					scanf("%s", &buffer[0]);
+					usleep(500);
+					send(clientSocket, buffer, strlen(buffer), 0);
+					
+					printf("Enter your country:\t");
+					scanf("%s", &buffer[0]);
+					usleep(500);
+					send(clientSocket, buffer, strlen(buffer), 0);
+
+					
+				}
+
 				printf("This would be the header of the scoreboard\n");
 				for(int i = 0; i < 5; i++)
 				{
+					//usleep(500);
+					//printf("this is after the sleep\n");
+					
 					recv(clientSocket, buffer, 1024, 0);
 					printf("%s\n", buffer);
 				}
+
+				
+
+				//printf("out of scoreboard area\n");
 				//strcpy(buffer, "client_side_over");
 				//send(clientSocket, buffer, strlen(buffer), 0);
 			}
