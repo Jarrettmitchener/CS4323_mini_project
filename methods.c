@@ -98,3 +98,95 @@ int getSearchPlayerStatus()
 	//printf("in get function, temp = %i\n", temp);
     return temp;
 }
+
+void updateMultiFlag(int num)
+{
+    FILE *f;
+    f = fopen("multi.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening occupied file in update\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getMultiFlag()
+{
+	FILE *file;
+    file = fopen("multi.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening occupied file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	
+    return temp;
+}
+
+void updateTurnFlag(int num)
+{
+    FILE *f;
+    f = fopen("turn.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening occupied file in update\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getTurnFlag()
+{
+	FILE *file;
+    file = fopen("turn.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening occupied file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	
+    return temp;
+}
+void updateGameFlag(int num)
+{
+    FILE *f;
+    f = fopen("game.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening occupied file in update\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getGameFlag()
+{
+	FILE *file;
+    file = fopen("game.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening occupied file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	
+    return temp;
+}
