@@ -131,6 +131,7 @@ int main()
 			//---------------------------------forked process while loop-----------------------------------//
 			while(shutdown == false)
 			{
+				usleep(500);
 				//cleans buffer
 				memset(buffer, 0, 1024);
 
@@ -149,7 +150,7 @@ int main()
 				else if(getOccupied() == 1 && gameInProgress == 0)
 				{
 					
-					printf("Client with port: %d is trying to connect\nbut server is busy with other client(s)\n", ntohs(newAddr.sin_port));
+					printf("Client with port: %d is trying to play a game\nbut server is busy with other client(s)\n", ntohs(newAddr.sin_port));
 					strcpy(buffer, "000");
 					//printf("what is suppose to be sent: %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -177,7 +178,7 @@ int main()
 					send(newSocket, buffer, strlen(buffer), 0);
 					bzero(buffer, sizeof(buffer));
 				}
-				//if client sends singleplayer
+				//---------------------------------------Singleplayer Section-------------------------------------//
 				else if(strcmp(buffer, "1") == 0)
 				{
 					printf("Client with port: %d has decided to play singleplayer\n", ntohs(newAddr.sin_port));
@@ -187,28 +188,106 @@ int main()
 					//printf("what is suppose to be sent to the client %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
 					bzero(buffer, sizeof(buffer));
-					for(int i = 0; i < 5; i++)
+
+					int gameCounter = 0;
+					//game end flag
+					int gameCont = 1;
+					//scoreboard flag if player needs to be recorded in the scoreboard
+					int scoreboard = 0;
+
+					while(gameCont == 1)
 					{
+						memset(buffer, 0, 1024);
+						
+						//printf("before first receive\n");
+						char buf[1024];
+						//recv(newSocket, buf, 1024, 0);	
+						//printf("they sent: %s\n", buf);
+
+						//game over status
+						if(gameCounter > 3)
+						{
+							gameCont = 0;
+
+							
+						}
+						usleep(500);
+						strcpy(buf, "");
+						sprintf(buf, "%d", gameCont);
+						send(newSocket, buf, strlen(buf), 0);
+						bzero(buf, sizeof(buf));
+						if(gameCont == 0)
+						{
+							printf("Client with port: %d game has ended\n", ntohs(newAddr.sin_port));
+							usleep(500);
+							strcpy(buf, "1000");
+							send(newSocket, buf, strlen(buf), 0);
+							bzero(buf, sizeof(buf));
+
+							//here would be the code to determine if the player gets added to the scoreboard
+							//sets flag that name needs to be obtained from client
+							scoreboard = 1;
+
+							break;
+						}
+
+
 						recv(newSocket, buffer, 1024, 0);
 						printf("Client with port: %i sent word: %s\n",ntohs(newAddr.sin_port), buffer);
 						strcpy(buffer, "5");
 						send(newSocket, buffer, strlen(buffer), 0);
 						bzero(buffer, sizeof(buffer));
+						gameCounter++;
+					}
+					usleep(500);
+					sprintf(buffer, "%d", scoreboard);
+					send(newSocket, buffer, strlen(buffer), 0);
+					bzero(buffer, sizeof(buffer));
+
+					//if player needs to be added to scoreboard
+					if(scoreboard == 1)
+					{
+						char firstname[1024];
+						char lastname[1024];
+						char country[1024];
+
+						memset(buffer, 0, 1024);
+						recv(newSocket, buffer, 1024, 0);
+						strcpy(firstname, buffer);
+						printf("Client with port: %i first name: %s\n",ntohs(newAddr.sin_port), firstname);
+
+						memset(buffer, 0, 1024);
+						recv(newSocket, buffer, 1024, 0);
+						strcpy(lastname, buffer);
+						printf("Client with port: %i last name: %s\n",ntohs(newAddr.sin_port), lastname);
+
+						memset(buffer, 0, 1024);
+						recv(newSocket, buffer, 1024, 0);
+						strcpy(country, buffer);
+						printf("Client with port: %i country: %s\n",ntohs(newAddr.sin_port), country);
 					}
 					for(int i = 0; i < 5; i++)
 					{
-						sleep(1);
-						strcpy(buffer, "LONMMMM GSTR ING");
+						
+						//sleep(1);
+						usleep(500);
+						//printf("after sleep at beginning\n");
+						strcpy(buffer, "Long String Inbound");
 						send(newSocket, buffer, strlen(buffer), 0);
+						bzero(buffer, sizeof(buffer));
 						
 					}
-					//for loop for sending top scores
+
+					printf("Finished sending scoreboard to client %s\n",ntohs(newAddr.sin_port));
 
 					//updates occupied status of server
 					printf("Client with port: %i is finished with their game\n", ntohs(newAddr.sin_port));
-					printf("Their score was %i\n", 5);
+					printf("Their final score was %i\n", 5);
+					
+					//updates occupied status of server
 					updateOccupiedFile(0);
 				}
+				//-----------------------------------------Multiplayer Section------------------------------------------//
 				else if(strcmp(buffer, "2") == 0)
 				{
 					printf("Client with port %d has decided to play multiplayer\n", ntohs(newAddr.sin_port));
