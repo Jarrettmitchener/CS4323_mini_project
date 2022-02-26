@@ -38,4 +38,5 @@ consistency after each send the progam waits for x microseconds, and
 x microseconds is set to the "delay" variable.
 
 If you're interested, heres the github we used, note that is a little bare
+https://github.com/Jarrettmitchener/CS4323_mini_project
 
