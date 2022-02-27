@@ -47,9 +47,9 @@ char fileWords[30][10];
 int fileWordsLength = 0;
 
 
-int main(){
-    wordProcessing(2);
-}
+// int main(){
+//     wordProcessing(2);
+// }
 
 
 // =============================================================================================================================================================================================================
@@ -62,6 +62,8 @@ void wordProcessing(int gamemode){
     int giveScore, passes = 0, playerTurn = 0, numWords = 0, failedGuesses = 0;
     char entry[20];
     char storage[50][20];
+    clock_t timeCheck;
+    double timeTaken;
 
     // Makes array of strings for words used in the game. 
     char** usedWords;
@@ -79,12 +81,15 @@ void wordProcessing(int gamemode){
     else{
         *(players + 1) = P2;
     }
-    
     // Gets the letters from the first line of each input_XX.txt
     srand(time(NULL));
     FILE* fp;
     char* filename = randomFile();
     fp = fopen(filename, "r");
+    if (fp == NULL){
+        printf("\nUnable to open file %s. Exiting.", filename);
+        exit(EXIT_FAILURE);
+    }
     char validLetters[20];
     fgets(validLetters, 20, fp);
     if (validLetters[strlen(validLetters) - 1] == '\n'){
@@ -103,6 +108,7 @@ void wordProcessing(int gamemode){
 
     // Singleplayer
     if (gamemode == 1){
+        // Setup
         int cpuGuesses = 0;
         printf("\nMulti Player Game %d\n", gamemode);
         strcpy(players[1].firstname, "Computer");
@@ -126,7 +132,9 @@ void wordProcessing(int gamemode){
             }
             printf("\nPlayer %d's Turn", playerTurn + 1);
             printf("\nEnter a Word. You have 4 minutes. '/' if you want to pass.\n");
-            if (passes == 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
+            if (passes >= 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
+
+            timeCheck = clock();
             // Player Turn
             if (playerTurn == 0) { scanf("%s", entry); }
             // CPU Turn
@@ -135,9 +143,18 @@ void wordProcessing(int gamemode){
                 printf("%s\n", entry);
                 cpuGuesses++; 
             }
+            timeCheck = clock() - timeCheck;
+            timeTaken = ((double)timeCheck) / CLOCKS_PER_SEC;
+            printf("TIME%d", timeTaken);
+
+            // If user took more than 4 minutes to input, then pass.
+            if (timeTaken >= 240){
+                printf("\nTook more than 4 minutes to answer. Passing.");
+                passes++;
+            }
 
             // Pass
-            if (strcmp(entry, "/") == 0){
+            else if (strcmp(entry, "/") == 0){
                 passes++;
             }
 
@@ -150,6 +167,11 @@ void wordProcessing(int gamemode){
                 if (giveScore >= 0){
                     failedGuesses = 0;
                     if (checkFile(entry, filename) == 0){
+                        FILE* fp;
+                        fp = fopen(filename, "a");
+                        fputs("\n", fp);
+                        fputs(entry, fp);
+                        fclose(fp); 
                         giveScore += 5;
                         players[playerTurn].wordsAdded++; 
                     }
@@ -175,6 +197,7 @@ void wordProcessing(int gamemode){
 
     // Multiplayer
     else if (gamemode == 2){
+        // Setup
         printf("\nMulti Player Game %d\n", gamemode);
         printf("Enter Player 2's first name: ");
         scanf("%s", players[1].firstname);
@@ -201,11 +224,20 @@ void wordProcessing(int gamemode){
             }
             printf("\nPlayer %d's Turn", playerTurn + 1);
             printf("\nEnter a Word. You have 4 minutes. '/' if you want to pass.\n");
-            if (passes == 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
+            if (passes >= 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
+            timeCheck = clock();
             scanf("%s", entry);
+            timeCheck = clock() - timeCheck;
+            timeTaken = ((double)timeCheck) / CLOCKS_PER_SEC;
+
+            // If user took more than 4 minutes to input, then pass.
+            if (timeTaken >= 240){
+                printf("\nTook more than 4 minutes to answer. Passing.");
+                passes++;
+            }
 
             // Pass
-            if (strcmp(entry, "/") == 0){
+            else if (strcmp(entry, "/") == 0){
                 passes++;
             }
 
@@ -216,8 +248,13 @@ void wordProcessing(int gamemode){
                 passes = 0;
                 // If word was valid
                 if (giveScore >= 0){
+                    // If word was new to the input file
                     if (checkFile(entry, filename) == 0){
-
+                        FILE* fp;
+                        fp = fopen(filename, "a");
+                        fputs("\n", fp);
+                        fputs(entry, fp);
+                        fclose(fp); 
                         giveScore += 5;
                         players[playerTurn].wordsAdded++; 
                     }
@@ -275,6 +312,10 @@ char* randomFile(){
 int checkFile(char* word, char* filename){
     FILE* dict;
     dict = fopen(filename, "r");
+    if (dict == NULL){
+        printf("\nUnable to open file %s. Exiting.", filename);
+        exit(EXIT_FAILURE);
+    }
     char checkWord[20];
     int check = 0;
     // Skips the first line of an input_XX.txt file
@@ -301,6 +342,10 @@ int checkFile(char* word, char* filename){
 void getFileWords(char* filename){
     FILE* dict;
     dict = fopen(filename, "r");
+    if (dict == NULL){
+        printf("\nUnable to open file %s. Exiting.", filename);
+        exit(EXIT_FAILURE);
+    }
     char hold[30];
     int i = 0;
     fgets(hold, 20, dict);
@@ -458,7 +503,6 @@ int scoring(char* word){
         return 0;
     }
 }
-
 
 
 
