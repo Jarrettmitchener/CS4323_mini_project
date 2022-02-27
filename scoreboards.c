@@ -7,8 +7,8 @@
  * THIS FUNCTION WILL OCCUR AFTER THE ROUND HAS BEEN COMPLETED BY AN INDIVIDUAL
  */
 /* FUNCTIONS
- * singlePlayerScoreboard() *player
- * multiPlayerScoreboard() *player
+ * singlePlayerScoreboard() void
+ * multiPlayerScoreboard() void
  * writeWinsConsoleSingle() void?
  * writeWinsConsoleMulti() void?
  */
@@ -28,7 +28,7 @@ struct player{
     int numWordsAdded;
 };
 
-
+//player structure test view function
 void displayPlayer(struct player *pPlayer){
     printf("PLAYER DATA");
     printf("\nFirst: %s\n", pPlayer->first_name);
@@ -39,7 +39,75 @@ void displayPlayer(struct player *pPlayer){
     printf("Words Found: %d\n", pPlayer->numWordsFound);
 }
 
-//sorting algorithm for highest to lowest score
+//function to read scores to add to array
+//POINTER ISSUE
+int *readScoresSingle(char* filename){
+    FILE* file = fopen(filename,"r");
+    int i = 0;
+
+    char first_name[20];
+    char last_name[20];
+    char country[20];
+    int *scoreArr[5];
+    int arrIndex = 0;
+
+    //skips first two lines
+    fscanf(file, "%*[^\n]\n");
+    fscanf(file, "%*[^\n]\n");
+
+    //while loop to find values
+    while (!feof (file)){
+        //skips existing string values
+        fscanf(file, "%s%s%s%d", first_name, last_name, country, &i);
+        printf("%d", i);
+        scoreArr[arrIndex] = &i;
+
+        arrIndex++;   
+    }
+
+    //initilizing final index
+    scoreArr[5] = 0;
+    fclose(file);
+
+    //return array to singlePlayer function
+    return *scoreArr;
+}
+
+//function to read scores to add to array for multi
+//POINTER ISSUE
+int *readScoresMulti(char* filename){
+    FILE* file = fopen(filename,"r");
+    int i = 0;
+
+    char first_name[20];
+    char last_name[20];
+    char country[20];
+    char outcome[6];
+    int *scoreArr[5];
+    int arrIndex = 0;
+
+    //skips first two lines
+    fscanf(file, "%*[^\n]\n");
+    fscanf(file, "%*[^\n]\n");
+
+    //while loop to find values
+    while (!feof (file)){
+        //skips existing string values
+        fscanf(file, "%s%s%s%d", first_name, last_name, country, &i);
+        printf("%d", i);
+        scoreArr[arrIndex] = &i;
+
+        arrIndex++;   
+    }
+
+    //initilizing final index
+    scoreArr[5] = 0;
+    fclose(file);
+
+    //return array to singlePlayer function
+    return *scoreArr;
+}
+//sorting algorithm for highest to lowest score in score array
 int scoreOrder(int *arr){
     for(int i = 0; i < 6; i++){
         for(int j = 0; j < 6; j++){
@@ -55,47 +123,40 @@ int scoreOrder(int *arr){
     return *arr;
 }
 
-void testFill(){
-    char line[6];
-    FILE *fptr;
-    fptr = fopen("singlePlayer.txt" , "w");
-
-
-}
-
+/*singlePlayerScoreboard()
+* 1. Checks for/creates scoreboard text file
+* 2. Reads for score values and stores into array
+* 3. Sorts array in descending order
+* 4. Performs swap for locations in file
+*/
 void singlePlayerScoreboard(struct player *playerArr, int score, int wordsFound, int wordsAdded){
 
    //creating singlePlayer.txt
     int num;
-    int scoreArr[6];
-    char line[100];
-    FILE *fptr;
-
-    //begins on read of file to check for score values
-    // fptr = fopen("singlePlayer.txt", "r");
-    // if(fptr == NULL){
-    //     printf("Error locating file singlePlayer.txt");
-    // }
+    int scoreArr[5];
+    char line[10];
+    FILE *singlefptr;
 
     //checks existence of file
-    if (fptr = fopen("singlePlayer.txt", "r"))
+    if (singlefptr = fopen("singlePlayer.txt", "r"))
     {
-        
-        fclose(fptr);
+        printf("File already exists, beginning revisions...");        
+        fclose(singlefptr);
     }
     //file does not exist; create file with template
     else{
 
         printf("Creating new file...\n");
-        fptr = fopen("singlePlayer.txt", "w");
-        fprintf(fptr, "%s", "\tFirst name\t|");
-        fprintf(fptr, "%s", "\tLast name\t|");
-        fprintf(fptr, "%s", "\tCountry    |");
-        fprintf(fptr, "%s", " Score |");
-        fprintf(fptr, "%s", " Number of Players |");
-        fprintf(fptr, "%s\n", " Number of Rounds");
-        fprintf(fptr, "----------------------------------------------------------------------------------------------------------------\n");
-        printf("File has been created. Ready to add/change data.");
+        singlefptr = fopen("singlePlayer.txt", "w");
+        fprintf(singlefptr, "%s", "\tFirst name\t|");
+        fprintf(singlefptr, "%s", "\tLast name\t|");
+        fprintf(singlefptr, "%s", "\tCountry    |");
+        fprintf(singlefptr, "%s", " Score |");
+        fprintf(singlefptr, "%s", " Number of Players |");
+        fprintf(singlefptr, "%s\n", " Number of Rounds");
+        fprintf(singlefptr, "----------------------------------------------------------------------------------------------------------------\n");
+        printf("File has been created. Ready to add/change data.\n");
+        printf("Beginning revisions...");
     }
     //SCORE COMPARISON
     //reading in lines for score array in comparison
@@ -103,14 +164,76 @@ void singlePlayerScoreboard(struct player *playerArr, int score, int wordsFound,
         //fscanf(fptr, "whatever format for score", scoreArr[i]);
     }
     //adding in final score value to final index
+    //POINTER ISSUE
+    scoreArr = readScoresSingle("singlePlayer.txt");
     scoreArr[6] = score;
     scoreOrder(scoreArr);   
- 
+    
+    //getw and putw for get and put of int
+    //fgets and fputs for get and put of strings
 
 
     // fscanf(fptr, "%s", line);
     // printf("%s", &line[0]);
 }
+
+/*multiPlayerScoreboard()
+* same as singlePlayer, just different file with addition of structure attribute for win/loss
+* 1. Checks for/creates scoreboard text file
+* 2. Reads for score values and stores into array
+* 3. Sorts array in descending order
+* 4. Performs swap for locations in file
+*/
+void multiPlayerScoreboard(struct player *playerArr, int score, int wordsFound, int wordsAdded){
+
+    FILE *multifptr;
+      //creating singlePlayer.txt
+    int num;
+    int scoreArr[5];
+    char line[10];
+
+    //checks existence of file
+    if (multifptr = fopen("multiPlayer.txt", "r"))
+    {
+        printf("File already exists, beginning revisions...");        
+        fclose(multifptr);
+    }
+    //file does not exist; create file with template
+    else{
+
+        printf("Creating new file...\n");
+        multifptr = fopen("singlePlayer.txt", "w");
+        fprintf(multifptr, "%s", "\tFirst name\t|");
+        fprintf(multifptr, "%s", "\tLast name\t|");
+        fprintf(multifptr, "%s", "\tCountry    |");
+        fprintf(multifptr, "%s", " Score |");
+        fprintf(multifptr, "%s", "\tWin/lose\t|");
+        fprintf(multifptr, "%s", " Number of Players |");
+        fprintf(multifptr, "%s\n", " Number of Rounds");
+        fprintf(multifptr, "---------------------------------------------------------------------------------------------------------------------------\n");
+        printf("File has been created. Ready to add/change data.\n");
+        printf("Beginning revisions...");
+    }
+    //SCORE COMPARISON
+    //reading in lines for score array in comparison
+    for(int i = 0; i < 5; i++){
+        //fscanf(fptr, "whatever format for score", scoreArr[i]);
+    }
+    //adding in final score value to final index
+    //POINTER ISSUE
+    scoreArr = readScoresSingle("singlePlayer.txt");
+    scoreArr[6] = score;
+    scoreOrder(scoreArr);   
+    
+    //getw and putw for get and put of int
+    //fgets and fputs for get and put of strings
+
+
+    // fscanf(fptr, "%s", line);
+    // printf("%s", &line[0]);
+
+}
+
 
 //demo driver for testing sequence, not for later use
 int main() {
@@ -131,4 +254,3 @@ int main() {
 //    singlePlayerScoreboard(testPlayer, 13, 3, 2);
     return 0;
 }
-
