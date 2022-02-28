@@ -28,8 +28,6 @@ int main()
 {
 	//flags
 	bool shutdown = false;
-	bool singlePlayer = false;
-	bool multiPlayer = false;
 	int gameInProgress = 0;
 	int occupied = 0;
 	int multiGameStart = 0;
@@ -48,12 +46,15 @@ int main()
 	char buffer[1024];
 	pid_t childpid;
 
-	
-	updateConnectedFile(0);
-	updateOccupiedFile(0);
-	updateSearchPlayerFile(0);
+	//initializes all multi process flags
+	setConnectedFlag(0);
+	setOccupiedFlag(0);
+	setSearchPlayerFlag(0);
+	setScoreP1(0);
+	setScoreP2(0);
 	updateMultiFlag(0);
 	updateGameFlag(0);
+
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
 	//if server can't make connection
@@ -106,7 +107,7 @@ int main()
 		printf("Connection accepted from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 		
 		int d = getNumConnected();
-		updateConnectedFile(d + 1);
+		setConnectedFlag(d + 1);
 
 
 		//--------------------------------------beginning of forked process---------------------------------------//
@@ -133,7 +134,7 @@ int main()
 				printf("Client %s:%d tried to connect,\n Too many clients connected, so was disconnected\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 				close(newSocket);
 				d = getNumConnected();
-				updateConnectedFile(d - 1);
+				setConnectedFlag(d - 1);
 				exit(0);
 			}
 			//if there are not too many clients connected
@@ -164,7 +165,7 @@ int main()
 				{
 					printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 					d = getNumConnected();
-					updateConnectedFile(d - 1);
+					setConnectedFlag(d - 1);
 					break;
 				}
 
@@ -250,7 +251,7 @@ int main()
 					printf("Client with port: %d has decided to play singleplayer\n", ntohs(newAddr.sin_port));
 					gameInProgress = 1;
 					strcpy(buffer, "111");
-					updateOccupiedFile(1);
+					setOccupiedFlag(1);
 					//printf("what is suppose to be sent to the client %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
 					bzero(buffer, sizeof(buffer));
@@ -352,7 +353,7 @@ int main()
 					printf("Their final score was %i\n", 69);
 					
 					//updates occupied status of server
-					updateOccupiedFile(0);
+					setOccupiedFlag(0);
 				}
 				//-----------------------------------------Multiplayer Section------------------------------------------//
 				else if(strcmp(buffer, "2") == 0)
@@ -369,7 +370,7 @@ int main()
 						updateMultiFlag(2);
 					}
 					
-					updateOccupiedFile(1);
+					setOccupiedFlag(1);
 					
 					//printf("what is suppose to be sent to the client %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -387,7 +388,7 @@ int main()
 					gameInProgress = 0;
 					//printf("what is suppose to be sent to the client %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
-					updateOccupiedFile(0);
+					setOccupiedFlag(0);
 					bzero(buffer, sizeof(buffer));
 				}
 				else
@@ -463,6 +464,7 @@ int main()
 
 					//sends first player flag
 					memset(buffer, 0, 1024);
+					usleep(DELAY);
 					if(playerID == getTurnFlag())
 					{
 						strcpy(buffer, "0");
@@ -478,7 +480,13 @@ int main()
 					//gamecounter, will be changed/removed once games implemented
 					int gameCounter = 0;
 					int gameContinue = 1;
-					//int gameStop = 0;
+					int name = 0;
+					
+					usleep(DELAY);
+					memset(buffer, 0, 1024);
+					sprintf(buffer, "%d", playerID);
+					send(newSocket, buffer, strlen(buffer), 0);
+					bzero(buffer, sizeof(buffer));
 
 					while(gameContinue == 1)
 					{
@@ -512,6 +520,23 @@ int main()
 						}
 						memset(buffer, 0, 1024);
 
+						//sends both players scores back to the user
+
+						//writes first players score to buffer
+						usleep(DELAY);
+						sprintf(buffer, "%d", getScoreP1());
+						send(newSocket, buffer, strlen(buffer), 0);
+						bzero(buffer, sizeof(buffer));
+
+						memset(buffer, 0, 1024);
+						usleep(DELAY);
+						//writes first players score to buffer
+						sprintf(buffer, "%d", getScoreP2());
+						send(newSocket, buffer, strlen(buffer), 0);
+						bzero(buffer, sizeof(buffer));
+
+
+						memset(buffer, 0, 1024);
 						//this would be where we choose a random set of letters
 						usleep(DELAY);
 						strcpy(buffer, "EIAHVC");
@@ -519,9 +544,18 @@ int main()
 						bzero(buffer, sizeof(buffer));
 
 						memset(buffer, 0, 1024);
+						//this would be where we choose a random letter and send
+						usleep(DELAY);
+						strcpy(buffer, "I");
+						send(newSocket, buffer, strlen(buffer), 0);
+						bzero(buffer, sizeof(buffer));
+
+						//receive word they sent
+						memset(buffer, 0, 1024);
 						recv(newSocket, buffer, 1024, 0);
 						printf("%s sent word: %s\n", firstname, buffer);
 
+						
 						//do some logic with the word they sent
 
 						//sends if word was valid or not
@@ -533,7 +567,28 @@ int main()
 						send(newSocket, buffer, strlen(buffer), 0);
 						bzero(buffer, sizeof(buffer));
 
+						int scoreForWord;//will be the score the person gets for the word they sent
+						scoreForWord = 5;
 
+						//updates player scores depending on which one they are
+						if(playerID == 0)
+						{
+							int s = getScoreP1();
+							setScoreP1(s + scoreForWord);
+						}
+						else if(playerID == 1)
+						{
+							int s = getScoreP2();
+							setScoreP2(s + scoreForWord);
+						}
+
+
+						gameCounter++;
+						//ends game, just for testing
+						if(gameCounter > 3)
+						{
+							updateGameFlag(1);
+						}
 						//flips the turn flag which lets the other player get out of the while loop
 						//while simultaneously getting the current player stuck in it
 						if(getTurnFlag() == 0)
@@ -544,6 +599,8 @@ int main()
 						{
 							updateTurnFlag(0);
 						}
+
+
 
 					}
 					

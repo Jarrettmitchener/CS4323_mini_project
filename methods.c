@@ -5,13 +5,13 @@
 #include <sys/types.h>
 #include <stdbool.h>
 
-void updateConnectedFile(int num)
+void setConnectedFlag(int num)
 {
     FILE *f;
     f = fopen("numConnected.txt", "w");
     if(f == NULL)
     {
-        printf("error opening numConnected file in update\n");
+        printf("error opening numConnected file\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -37,13 +37,13 @@ int getNumConnected()
     return temp;
 }
 
-void updateOccupiedFile(int num)
+void setOccupiedFlag(int num)
 {
     FILE *f;
     f = fopen("occupied.txt", "w");
     if(f == NULL)
     {
-        printf("error opening occupied file in update\n");
+        printf("error opening occupied file\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -68,13 +68,13 @@ int getOccupied()
     return temp;
 }
 
-void updateSearchPlayerFile(int num)
+void setSearchPlayerFlag(int num)
 {
     FILE *f;
     f = fopen("search.txt", "w");
     if(f == NULL)
     {
-        printf("error opening occupied file in update\n");
+        printf("error opening searcg file\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -88,7 +88,7 @@ int getSearchPlayerStatus()
 	//if file doesnt open, exit
     if(file == NULL)
     {
-        printf("error opening occupied file\n");
+        printf("error opening search file\n");
         exit(1);
     }
 
@@ -105,7 +105,7 @@ void updateMultiFlag(int num)
     f = fopen("multi.txt", "w");
     if(f == NULL)
     {
-        printf("error opening occupied file in update\n");
+        printf("error opening multi flag file\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -119,7 +119,7 @@ int getMultiFlag()
 	//if file doesnt open, exit
     if(file == NULL)
     {
-        printf("error opening occupied file\n");
+        printf("error opening multi flag file\n");
         exit(1);
     }
 
@@ -136,7 +136,7 @@ void updateTurnFlag(int num)
     f = fopen("turn.txt", "w");
     if(f == NULL)
     {
-        printf("error opening occupied file in update\n");
+        printf("error opening turn flag file\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -150,7 +150,7 @@ int getTurnFlag()
 	//if file doesnt open, exit
     if(file == NULL)
     {
-        printf("error opening occupied file\n");
+        printf("error opening turn flag file\n");
         exit(1);
     }
 
@@ -166,7 +166,7 @@ void updateGameFlag(int num)
     f = fopen("game.txt", "w");
     if(f == NULL)
     {
-        printf("error opening occupied file in update\n");
+        printf("error opening game flag file\n");
         exit(1);
     }
     fprintf(f, "%i", num);
@@ -180,7 +180,7 @@ int getGameFlag()
 	//if file doesnt open, exit
     if(file == NULL)
     {
-        printf("error opening occupied file\n");
+        printf("error opening game flag file\n");
         exit(1);
     }
 
@@ -190,3 +190,96 @@ int getGameFlag()
 	
     return temp;
 }
+
+void setScoreP1(int num)
+{
+    FILE *f;
+    f = fopen("score1.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening p1 score file\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getScoreP1()
+{
+	FILE *file;
+    file = fopen("score1.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening p1 score file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	
+    return temp;
+}
+
+void setScoreP2(int num)
+{
+    FILE *f;
+    f = fopen("score2.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening p2 score file\n");
+        exit(1);
+    }
+    fprintf(f, "%i", num);
+    fclose(f);
+
+}
+int getScoreP2()
+{
+	FILE *file;
+    file = fopen("score2.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening p2 score file\n");
+        exit(1);
+    }
+
+    int temp;
+    fscanf(file, "%i", &temp);
+    fclose(file);
+	
+    return temp;
+}
+
+/*void setName(char* s)
+{
+    FILE *f;
+    f = fopen("name.txt", "w");
+    if(f == NULL)
+    {
+        printf("error opening name file\n");
+        exit(1);
+    }
+    fprintf(f, "%s", s);
+    fclose(f);
+
+}
+char* getName()
+{
+	FILE *file;
+    file = fopen("name.txt", "r");
+	//if file doesnt open, exit
+    if(file == NULL)
+    {
+        printf("error opening name file\n");
+        exit(1);
+    }
+
+    char* temp;
+    fscanf(file, "%s", temp);
+    fclose(file);
+	
+    return temp;
+}*/

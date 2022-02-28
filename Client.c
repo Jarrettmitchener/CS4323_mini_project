@@ -284,6 +284,11 @@ int main()
 
 				int gameContinue = 1;
 				int gameStop = 0;
+
+				//finds out if this client is player 1 or 2
+				memset(buffer, 0, 1024);
+				recv(clientSocket, buffer, 1024, 0);
+				int playerID = atoi(buffer);
 				while(gameContinue == 1)
 				{
 					
@@ -295,11 +300,38 @@ int main()
 						printf("Game is over\n");
 						break;
 					}
-					
+					char s1[1024];
+					char s2[1024];
+					memset(buffer, 0, 1024);
+					recv(clientSocket, buffer, 1024, 0);
+					strcpy(s1, buffer);
 
 					memset(buffer, 0, 1024);
 					recv(clientSocket, buffer, 1024, 0);
+					strcpy(s2, buffer);
+
+					if(playerID == 0)
+					{
+						printf("Your score is: %s\n", s1);
+						printf("Your opponents score is %s\n", s2);
+					}
+					else
+					{
+						printf("Your score is: %s\n", s2);
+						printf("Your opponents score is %s\n", s1);
+					}
+
+					//receiving random letters
+					memset(buffer, 0, 1024);
+					recv(clientSocket, buffer, 1024, 0);
 					printf("The letters you received: %s\n", buffer);
+
+
+					//receiving the random letter
+					memset(buffer, 0, 1024);
+					recv(clientSocket, buffer, 1024, 0);
+					printf("The letter you must use: %s\n", buffer);
+					
 					printf("Your word:\t");
 					scanf("%s", &buffer[0]);
 
