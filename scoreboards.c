@@ -39,11 +39,10 @@ void displayPlayer(struct player *pPlayer){
     printf("Words Found: %d\n", pPlayer->numWordsFound);
 }
 
-void writeSingleTableHeader(char* filename){
+void initializeTable(char* filename){
         
         FILE* file = fopen(filename,"w");
-        
-        printf("Creating new file...\n");
+
         file = fopen("singlePlayer.txt", "w");
         fprintf(file, "%s", "\tFirst name\t|");
         fprintf(file, "%s", "\tLast name\t|");
@@ -52,16 +51,45 @@ void writeSingleTableHeader(char* filename){
         fprintf(file, "%s", " Number of Words Found |");
         fprintf(file, "%s\n", " Number of Added to Dictionary");
         fprintf(file , "-----------------------------------------------------------------------------------------------------------------------------\n");
-        printf("File has been created. Ready to add/change data.\n");
-        printf("Beginning revisions...");
+        fprintf(file, "\t%s\t", "Zhao");
+        fprintf(file, "\t%s\t", "Bao");
+        fprintf(file, "\t%s\t", "China");
+        fprintf(file, "\t%d\t", 34);
+        fprintf(file, "\t%d\t", 7);
+        fprintf(file, "\t%d\n", 2);
+        fprintf(file, "\t%s\t", "Nakano");
+        fprintf(file, "\t%s\t", "Tsutomu");
+        fprintf(file, "\t%s\t", "Japan");
+        fprintf(file, "\t%d\t", 32);
+        fprintf(file, "\t%d\t", 8);
+        fprintf(file, "\t%d\n", 9);
+        fprintf(file, "\t%s\t", "Felicjan");
+        fprintf(file, "\t%s\t", "Wos");
+        fprintf(file, "\t%s\t", "Poland");
+        fprintf(file, "\t%d\t", 31);
+        fprintf(file, "\t%d\t", 9);
+        fprintf(file, "\t%d\n", 1);
+        fprintf(file, "\t%s\t", "Kapsar");
+        fprintf(file, "\t%s\t", "Zimmermann");
+        fprintf(file, "\t%s\t", "Germany");
+        fprintf(file, "\t%d\t", 30);
+        fprintf(file, "\t%d\t", 11);
+        fprintf(file, "\t%d\n", 0);
+        fprintf(file, "\t%s\t", "Karina");
+        fprintf(file, "\t%s\t", "Maynard");
+        fprintf(file, "\t%s\t", "USA");
+        fprintf(file, "\t%d\t", 30);
+        fprintf(file, "\t%d\t", 10);
+        fprintf(file, "\t%d\n", 0);
+        printf("File has been created. Ready to add/change data.");
         fclose(file);
 }
 
-void singlePlayerBuild(){
 
-}
 //function to read scores to add to array
-void readScoresSingle(char* filename, int score, struct player* newPlayer){
+void readScoresSingle(char* filename,struct player* newPlayer){
+    
+    //reading in
     FILE* file = fopen(filename,"r");
     int i = 0;
 
@@ -87,7 +115,6 @@ void readScoresSingle(char* filename, int score, struct player* newPlayer){
     while (!feof (file)){
         //skips existing string values
         fscanf(file, "%s%s%s%d%d%d", first_name, last_name, country, &i, &numWordsFound, &numWordsAdded);
-        printf("%d", i);
         scoreArr[arrIndex] = i;
 
         //storing all players data into player structures
@@ -157,66 +184,103 @@ void readScoresSingle(char* filename, int score, struct player* newPlayer){
     }
 
     //arranging placements
-    writeSingleTableHeader(filename);
+
+    file = fopen("singlePlayer.txt", "w");
+    fprintf(file, "%s", "\tFirst name\t|");
+    fprintf(file, "%s", "\tLast name\t|");
+    fprintf(file, "%s", "\tCountry   |");
+    fprintf(file, "%s", " Score |");
+    fprintf(file, "%s", " Number of Words Found |");
+    fprintf(file, "%s\n", " Number of Added to Dictionary");
+    fprintf(file , "-----------------------------------------------------------------------------------------------------------------------------\n");
+
+    char flagname[20] = "";
 
 
-    file = fopen("singlePlayer.txt","a");
-    fscanf(file, "%*[^\n]\n");
-    fscanf(file, "%*[^\n]\n");
+    // fscanf(file, "%*[^\n]\n");
+    // fscanf(file, "%*[^\n]\n");
+
 
     //placing in order depending on score array placement
-    for(int i = 0; i < 6; i++){
-        if(scoreArr[i] == p1->score){
+    for(int i = 0; i < 5; i++){
+ 
+        if(scoreArr[i] == p1->score && (strcmp(p1->first_name, flagname) < 0 || strcmp(p1->first_name, flagname) > 0)){
             fprintf(file, "\t%s\t", p1->first_name);
             fprintf(file, "\t%s\t", p1->last_name);
             fprintf(file, "\t%s\t", p1->country);
             fprintf(file, "\t%d\t", p1->score);
             fprintf(file, "\t%d\t", p1->numWordsFound);
             fprintf(file, "\t%d\n", p1->numWordsAdded);
+            strcpy(flagname, p1->first_name);
+            printf("\n%s", flagname);
+
+            continue;
         }
-        if(scoreArr[i] == p2->score){
+        if(scoreArr[i] == p2->score && (strcmp(p2->first_name, flagname) < 0 || strcmp(p2->first_name, flagname) > 0)){
             fprintf(file, "\t%s\t", p2->first_name);
             fprintf(file, "\t%s\t", p2->last_name);
             fprintf(file, "\t%s\t", p2->country);
             fprintf(file, "\t%d\t", p2->score);
             fprintf(file, "\t%d\t", p2->numWordsFound);
             fprintf(file, "\t%d\n", p2->numWordsAdded);
+            strcpy(flagname, p2->first_name);
+            printf("\n%s", flagname);
+            
+            continue;
         }
-        if(scoreArr[i] == p3->score){
+        if(scoreArr[i] == p3->score && (strcmp(p3->first_name, flagname) < 0 || strcmp(p3->first_name, flagname) > 0)){
             fprintf(file, "\t%s\t", p3->first_name);
             fprintf(file, "\t%s\t", p3->last_name);
             fprintf(file, "\t%s\t", p3->country);
             fprintf(file, "\t%d\t", p3->score);
             fprintf(file, "\t%d\t", p3->numWordsFound);
             fprintf(file, "\t%d\n", p3->numWordsAdded);
+            strcpy(flagname, p3->first_name);
+            printf("\n%s", flagname);
+
+           continue;
         }
-        if(scoreArr[i] == p4->score){
+        if(scoreArr[i] == p4->score && (strcmp(p4->first_name, flagname) < 0 || strcmp(p4->first_name, flagname) > 0)){
             fprintf(file, "\t%s\t", p4->first_name);
             fprintf(file, "\t%s\t", p4->last_name);
             fprintf(file, "\t%s\t", p4->country);
             fprintf(file, "\t%d\t", p4->score);
             fprintf(file, "\t%d\t", p4->numWordsFound);
             fprintf(file, "\t%d\n", p4->numWordsAdded);
+            strcpy(flagname, p4->first_name);
+            printf("\n%s", flagname);
+ 
+
+            continue;
         }
-        if(scoreArr[i] == p5->score){
+        if(scoreArr[i] == p5->score && (strcmp(p5->first_name, flagname) < 0 || strcmp(p5->first_name, flagname) > 0)){
             fprintf(file, "\t%s\t", p5->first_name);
             fprintf(file, "\t%s\t", p5->last_name);
             fprintf(file, "\t%s\t", p5->country);
             fprintf(file, "\t%d\t", p5->score);
             fprintf(file, "\t%d\t", p5->numWordsFound);
             fprintf(file, "\t%d\n", p5->numWordsAdded);
+            strcpy(flagname, p5->first_name);
+            printf("\n%s", flagname);
+
+ 
+            continue;
         }
-        if(scoreArr[i] == newPlayer->score){
+        if(scoreArr[i] == newPlayer->score && (strcmp(newPlayer->first_name, flagname) < 0 || strcmp(newPlayer->first_name, flagname) > 0)){
             fprintf(file, "\t%s\t", newPlayer->first_name);
             fprintf(file, "\t%s\t", newPlayer->last_name);
             fprintf(file, "\t%s\t", newPlayer->country);
             fprintf(file, "\t%d\t", newPlayer->score);
             fprintf(file, "\t%d\t", newPlayer->numWordsFound);
             fprintf(file, "\t%d\n", newPlayer->numWordsAdded);
+            strcpy(flagname, newPlayer->first_name);
+            printf("\n%s", flagname);
+
+           continue;
         }
     }
 
-
+    fclose(file);
 
 }
 
@@ -256,62 +320,24 @@ int *readScoresMulti(char* filename){
 }
 
 
-//single player function for swapping values
-// void singleScoreboardPlacements(int *arr,char* filename){
-//     FILE* file = fopen(filename,"w");
-//     char line[1000];
-//     fscanf(file, "%*[^\n]\n");
-//     fscanf(file, "%*[^\n]\n");
-//     int i = 0;
-
-
-//     while(fgets(line, sizeof(line), file) != NULL){
-//         fputs()        
-//     }
-// }
-
 /*singlePlayerScoreboard()
 * 1. Checks for/creates scoreboard text file
 * 2. Reads for score values and stores into array
 * 3. Sorts array in descending order
 * 4. Performs swap for locations in file
 */
-void singlePlayerScoreboard(struct player *playerArr, int score, int wordsFound, int wordsAdded){
+void singlePlayerScoreboard(struct player *playerArr){
 
    //creating singlePlayer.txt
-    FILE *singlefptr;
 
     //checks existence of file
-    if (singlefptr = fopen("singlePlayer.txt", "r"))
-    {
-        printf("File already exists, beginning revisions...");        
-        fclose(singlefptr);
-    }
-    //file does not exist; create file with template
-    else{
-        writeSingleTableHeader("singlePlayer.txt");
 
-    }
+    //file does not exist; create file with template
     //SCORE COMPARISON
     //reading in lines for score array in comparison
-    for(int i = 0; i < 5; i++){
-        //fscanf(fptr, "whatever format for score", scoreArr[i]);
-    }
     //adding in final score value to final index
-    readScoresSingle("singlePlayer.txt", score, playerArr);
+    readScoresSingle("singlePlayer.txt", playerArr);
 
-    
-    //arranging the order of the array
-    
-
-
-
-    //getw and putw for get and put of int
-    //fgets and fputs for get and put of strings
-
-
-    // fscanf(fptr, "%s", line);
-    // printf("%s", &line[0]);
 }
 
 /*multiPlayerScoreboard()
@@ -375,16 +401,19 @@ void multiPlayerScoreboard(struct player *playerArr, int score, int wordsFound, 
 int main() {
 
     //driver player values for testing
-    struct player *testPlayer = malloc(5000);
+    struct player *testPlayer = malloc(1000);
     strcpy(testPlayer->first_name, "Keenan");
     strcpy(testPlayer->last_name, "Holsapple");
     strcpy(testPlayer->country, "USA");
     strcpy(testPlayer->outcome, "Win");
-    testPlayer->score = 12;
+    testPlayer->score = 42;
     testPlayer->numWordsAdded = 3;
     testPlayer->numWordsFound = 2;
 
-    singlePlayerScoreboard(testPlayer, 1, 2, 3);
+
+    initializeTable("singlePlayer.txt");
+
+    singlePlayerScoreboard(testPlayer);
 
     return 0;
 }
