@@ -30,10 +30,12 @@ typedef struct {
 
 void wordProcessing();
 char* randomFile();
+int randomLetter(char* letters);
 int isValidWordAndScore(char* prev, char* new, char* letters, char** used);
 int checkFile(char* word, char* filename);
 void getFileWords(char* filename);
-int isValidWordFirstAndScore(char* new, char* letters, char** used);
+int isValidWordAndScorePass(char* new, char* letters, char** used);
+int isValidWordBeginAndScore(int letterSpot, char* new, char* letters, char** used);
 int hasBeenUsed(char* new, char** words);
 int scoring(char* word);
 char* getCPUWord(int numGuesses);
@@ -47,9 +49,12 @@ char fileWords[30][10];
 int fileWordsLength = 0;
 
 
-// int main(){
-//     wordProcessing(2);
-// }
+int main(){
+    char* z = "zulu";
+    int i = checkFile(z, "dictionary.txt");
+    printf("INT: %d", i);
+    // wordProcessing(1);
+}
 
 
 // =============================================================================================================================================================================================================
@@ -59,11 +64,12 @@ void wordProcessing(int gamemode){
     P1.score = 0; P1.wordsAdded = 0; P1.wordsFound = 0;
     P2.score = 0; P2.wordsAdded = 0; P2.wordsFound = 0;
     CPU.score = 0; CPU.wordsAdded = 0; CPU.wordsFound = 0;
-    int giveScore, passes = 0, playerTurn = 0, numWords = 0, failedGuesses = 0;
+    int giveScore, letterSpot, passes = 0, playerTurn = 0, numWords = 0, failedGuesses = 0;
     char entry[20];
     char storage[50][20];
     clock_t timeCheck;
     double timeTaken;
+    int firstLetter;
 
     // Makes array of strings for words used in the game. 
     char** usedWords;
@@ -110,10 +116,14 @@ void wordProcessing(int gamemode){
     if (gamemode == 1){
         // Setup
         int cpuGuesses = 0;
-        printf("\nMulti Player Game %d\n", gamemode);
+        printf("\nSingle Player Game\n");
         strcpy(players[1].firstname, "Computer");
         strcpy(players[1].lastname, "Player");
         strcpy(players[1].country, "N/A");
+        if (numWords == 0 && playerTurn == 0){
+            firstLetter = randomLetter(validLetters);
+        }
+
         while (passes < 4){
             if (failedGuesses == 3){
                 printf("\nToo many invalid guesses. Passing");
@@ -123,7 +133,6 @@ void wordProcessing(int gamemode){
                 failedGuesses = 0;
                 continue;
             }
-
             printf("\nLetters: %s", validLetters);
             printf("\nPlayer 1 Score: %d", players[0].score);
             printf("\nPlayer 2 Score: %d\nUsed Words: ", players[1].score);
@@ -133,6 +142,7 @@ void wordProcessing(int gamemode){
             printf("\nPlayer %d's Turn", playerTurn + 1);
             printf("\nEnter a Word. You have 4 minutes. '/' if you want to pass.\n");
             if (passes >= 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
+            else if (numWords == 0) { printf("You have to start the first word with '%c'\n", validLetters[firstLetter]); }
 
             timeCheck = clock();
             // Player Turn
@@ -145,10 +155,10 @@ void wordProcessing(int gamemode){
             }
             timeCheck = clock() - timeCheck;
             timeTaken = ((double)timeCheck) / CLOCKS_PER_SEC;
-            printf("TIME%d", timeTaken);
+            printf("TIME%f", timeTaken);
 
             // If user took more than 4 minutes to input, then pass.
-            if (timeTaken >= 240){
+            if (timeTaken > 240){
                 printf("\nTook more than 4 minutes to answer. Passing.");
                 passes++;
             }
@@ -160,7 +170,8 @@ void wordProcessing(int gamemode){
 
             // Word Entered
             else {
-                if (numWords == 0 || passes == 2) { giveScore = isValidWordFirstAndScore(entry, validLetters, usedWords); }         
+                if (numWords == 0) { giveScore = isValidWordBeginAndScore(firstLetter, entry, validLetters, usedWords);}
+                else if (passes >= 2) { giveScore = isValidWordAndScorePass(entry, validLetters, usedWords); }         
                 else { giveScore = isValidWordAndScore(usedWords[numWords - 1], entry, validLetters, usedWords); }                  
                 passes = 0;
                 // If word was valid
@@ -198,13 +209,16 @@ void wordProcessing(int gamemode){
     // Multiplayer
     else if (gamemode == 2){
         // Setup
-        printf("\nMulti Player Game %d\n", gamemode);
+        printf("\nMulti Player Game\n");
         printf("Enter Player 2's first name: ");
         scanf("%s", players[1].firstname);
         printf("Enter Player 2's last name: ");
         scanf("%s", players[1].lastname);
         printf("Enter Player 2's country: ");
         scanf("%s", players[1].country);
+        if (numWords == 0 && playerTurn == 0){
+            firstLetter = randomLetter(validLetters);
+        }
 
         while (passes < 4){
             if (failedGuesses == 3){
@@ -225,13 +239,15 @@ void wordProcessing(int gamemode){
             printf("\nPlayer %d's Turn", playerTurn + 1);
             printf("\nEnter a Word. You have 4 minutes. '/' if you want to pass.\n");
             if (passes >= 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
+            else if (numWords == 0) { printf("You have to start the first word with '%c'\n", validLetters[firstLetter]); }
             timeCheck = clock();
             scanf("%s", entry);
             timeCheck = clock() - timeCheck;
             timeTaken = ((double)timeCheck) / CLOCKS_PER_SEC;
+            printf("TIME%f", timeTaken);
 
             // If user took more than 4 minutes to input, then pass.
-            if (timeTaken >= 240){
+            if (timeTaken > 240){
                 printf("\nTook more than 4 minutes to answer. Passing.");
                 passes++;
             }
@@ -243,7 +259,8 @@ void wordProcessing(int gamemode){
 
             // Word Entered
             else {
-                if (numWords == 0 || passes == 2) { giveScore = isValidWordFirstAndScore(entry, validLetters, usedWords); }         
+                if (numWords == 0) { giveScore = isValidWordBeginAndScore(firstLetter, entry, validLetters, usedWords);}
+                else if (passes >= 2) { giveScore = isValidWordAndScorePass(entry, validLetters, usedWords); }         
                 else { giveScore = isValidWordAndScore(usedWords[numWords - 1], entry, validLetters, usedWords); }                  
                 passes = 0;
                 // If word was valid
@@ -308,6 +325,14 @@ char* randomFile(){
 
 
 
+// Get Random Starting Letter.
+int randomLetter(char* letters){
+    int r = rand() % (strlen(letters) - 1);
+    return r;
+}
+
+
+
 // Checks to see if the word given is in the file given. This works for both the input files and the dictionary. Returns 5 if true, 0 if false.
 int checkFile(char* word, char* filename){
     FILE* dict;
@@ -327,7 +352,8 @@ int checkFile(char* word, char* filename){
         if (checkWord[strlen(checkWord) - 1] == '\n'){
             checkWord[strlen(checkWord) - 1] = '\0';
         }
-        if (strcasecmp(word, checkWord) == 0){
+        printf("Dict: %s  Word: %s\n", checkWord, word);
+        if (strcmp(word, checkWord) == 0){
             check = 5;
         }
     }
@@ -372,8 +398,10 @@ int isValidWordAndScore(char* prev, char* new, char* letters, char** used){
     // Checks if new word uses the last letter(s) of the previous word.
     int check = 0;
     for (int i = 0; i < strlen(prev) && i < strlen(new); i++){
+        
         check = 0;
         for (int j = 0; j <= i; j++){
+            
             if (tolower(prev[strlen(prev) - 1 - i + j]) == tolower(new[j])){
                 check++;
             }
@@ -426,10 +454,58 @@ int isValidWordAndScore(char* prev, char* new, char* letters, char** used){
 
 
 
-// Checks if the new word inputted is valid. This is same as the function above, except without the previous word check. This is for the first word in a game,
-// or when each player passes once and the previous word check is not needed.
-int isValidWordFirstAndScore(char* new, char* letters, char** used){
+// Checks if the new word inputted is valid. This is same as the function above, except without the previous word check. This is for 
+// when each player passes once and the previous word check is not needed.
+int isValidWordAndScorePass(char* new, char* letters, char** used){
     int multicheck = 0, check;
+
+    // Checks if new word is in dictionary.txt.
+    check = checkFile(new, "dictionary.txt");
+    if (check == 5) { 
+        multicheck++; 
+    }
+    else {
+        printf("Word is not present in dictionary.txt. Invalid Word.");     
+        return -1; 
+    }
+
+    // Checks if new word only consists of the valid letters given by the input file.
+    for (int i = 0; i < strlen(new); i++){
+        check = 0;
+        for (int j = 0; j < strlen(letters); j++){
+            if (tolower(new[i]) == tolower(letters[j])){
+                check = 1;
+                j = strlen(letters);
+            }
+        }
+        if (check == 0){
+            printf("Word does not only consist of letters available. Invalid Word.");
+            return -1;
+        }
+    }
+    
+    // Word has passed initial validty check. Now check if the word has been used already.
+    check = hasBeenUsed(new, used);
+    if (check == 1){
+        printf("Word has already been used. -2 point penalization.");
+        return -2;
+    }
+
+    // Word is validated. Return value of word.
+    return scoring(new);
+}
+
+
+
+// Checks if the new word inputted is valid. This is for the first word entered. It's the same as the function above, except that the first letter
+// of the guess needs to match the letter randomly chosen to start with.
+int isValidWordBeginAndScore(int letterSpot, char* new, char* letters, char** used){
+    int multicheck = 0, check;
+
+    if (tolower(letters[letterSpot]) != tolower(new[0])){
+        printf("Word does not start with %c. Invalid Word.", letters[letterSpot]);     
+        return -1; 
+    }
 
     // Checks if new word is in dictionary.txt.
     check = checkFile(new, "dictionary.txt");
