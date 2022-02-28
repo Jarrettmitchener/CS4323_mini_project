@@ -51,14 +51,14 @@ void initializeTable(char* filename){
         fprintf(file, "%s", " Number of Words Found |");
         fprintf(file, "%s\n", " Number of Added to Dictionary");
         fprintf(file , "-----------------------------------------------------------------------------------------------------------------------------\n");
-        fprintf(file, "\t%s\t", "Zhao");
-        fprintf(file, "\t%s\t", "Bao");
-        fprintf(file, "\t%s\t", "China");
-        fprintf(file, "\t%d\t", 34);
-        fprintf(file, "\t%d\t", 7);
-        fprintf(file, "\t%d\n", 2);
-        fprintf(file, "\t%s\t", "Nakano");
-        fprintf(file, "\t%s\t", "Tsutomu");
+        fprintf(file, "%s ", "Zhao");
+        fprintf(file, "%s ", "Bao");
+        fprintf(file, "%s ", "China");
+        fprintf(file, "%d ", 34);
+        fprintf(file, "%d ", 7);
+        fprintf(file, "%d ", 2);
+        fprintf(file, "\t%3s\t", "Nakano");
+        fprintf(file, "\t%9s\t", "Tsutomu");
         fprintf(file, "\t%s\t", "Japan");
         fprintf(file, "\t%d\t", 32);
         fprintf(file, "\t%d\t", 8);
@@ -98,35 +98,35 @@ void initializeMultiTable(char* filename){
         fprintf(file, "%s", " Number of Words Found |");
         fprintf(file, "%s\n", " Number of Added to Dictionary");
         fprintf(file , "-----------------------------------------------------------------------------------------------------------------------------\n");
-        fprintf(file, "\t%s\t", "Zhao");
-        fprintf(file, "\t%s\t", "Bao");
-        fprintf(file, "\t%s\t", "China");
-        fprintf(file, "\t%d\t", 34);
+        fprintf(file, "\t%3s\t", "Zhao");
+        fprintf(file, " \t%9s\t", "Bao");
+        fprintf(file, "\t      %s\t", "China");
+        fprintf(file, "\t      %d\t", 34);
         fprintf(file, "\t%s\t", "Win");
         fprintf(file, "\t%d\t", 7);
         fprintf(file, "\t%d\n", 2);
-        fprintf(file, "\t%s\t", "Nakano");
+        fprintf(file, "\t%3s\t", "Nakano");
         fprintf(file, "\t%s\t", "Tsutomu");
         fprintf(file, "\t%s\t", "Japan");
         fprintf(file, "\t%d\t", 32);
         fprintf(file, "\t%s\t", "Win");
         fprintf(file, "\t%d\t", 8);
         fprintf(file, "\t%d\n", 9);
-        fprintf(file, "\t%s\t", "Felicjan");
+        fprintf(file, "\t%3s\t", "Felicjan");
         fprintf(file, "\t%s\t", "Wos");
         fprintf(file, "\t%s\t", "Poland");
         fprintf(file, "\t%d\t", 31);
         fprintf(file, "\t%s\t", "Loss");
         fprintf(file, "\t%d\t", 9);
         fprintf(file, "\t%d\n", 1);
-        fprintf(file, "\t%s\t", "Kapsar");
+        fprintf(file, "\t%3s\t", "Kapsar");
         fprintf(file, "\t%s\t", "Zimmermann");
         fprintf(file, "\t%s\t", "Germany");
         fprintf(file, "\t%d\t", 30);
         fprintf(file, "\t%s\t", "Win");
         fprintf(file, "\t%d\t", 11);
         fprintf(file, "\t%d\n", 0);
-        fprintf(file, "\t%s\t", "Karina");
+        fprintf(file, "\t%3s\t", "Karina");
         fprintf(file, "\t%s\t", "Maynard");
         fprintf(file, "\t%s\t", "USA");
         fprintf(file, "\t%d\t", 30);
@@ -252,84 +252,78 @@ void readScoresSingle(char* filename,struct player* newPlayer){
     for(int i = 0; i < 5; i++){
  
         if(scoreArr[i] == p1->score && (strcmp(p1->first_name, flagname) < 0 || strcmp(p1->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p1->first_name);
-            fprintf(file, "\t%s\t", p1->last_name);
-            fprintf(file, "\t%s\t", p1->country);
-            fprintf(file, "\t%d\t", p1->score);
-            fprintf(file, "\t%d\t", p1->numWordsFound);
-            fprintf(file, "\t%d\n", p1->numWordsAdded);
+            fprintf(file, "\t%3s\t", p1->first_name);
+            fprintf(file, "%22s", p1->last_name);
+            fprintf(file, "%22s", p1->country);
+            fprintf(file, "%11d", p1->score);
+            fprintf(file, "%15d", p1->numWordsFound);
+            fprintf(file, "%20d\n", p1->numWordsAdded);
             strcpy(flagname, p1->first_name);
             printf("\n%s", flagname);
 
             continue;
         }
         if(scoreArr[i] == p2->score && (strcmp(p2->first_name, flagname) < 0 || strcmp(p2->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p2->first_name);
-            fprintf(file, "\t%s\t", p2->last_name);
-            fprintf(file, "\t%s\t", p2->country);
-            fprintf(file, "\t%d\t", p2->score);
-            fprintf(file, "\t%d\t", p2->numWordsFound);
-            fprintf(file, "\t%d\n", p2->numWordsAdded);
+            fprintf(file, "\t%3s\t", p2->first_name);
+            fprintf(file, "%22s", p2->last_name);
+            fprintf(file, "%22s", p2->country);
+            fprintf(file, "%11d", p2->score);
+            fprintf(file, "%15d", p2->numWordsFound);
+            fprintf(file, "%20d\n", p2->numWordsAdded);
             strcpy(flagname, p2->first_name);
             printf("\n%s", flagname);
             
             continue;
         }
         if(scoreArr[i] == p3->score && (strcmp(p3->first_name, flagname) < 0 || strcmp(p3->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p3->first_name);
-            fprintf(file, "\t%s\t", p3->last_name);
-            fprintf(file, "\t%s\t", p3->country);
-            fprintf(file, "\t%d\t", p3->score);
-            fprintf(file, "\t%d\t", p3->numWordsFound);
-            fprintf(file, "\t%d\n", p3->numWordsAdded);
+            fprintf(file, "\t%3s\t", p3->first_name);
+            fprintf(file, "%14s", p3->last_name);
+            fprintf(file, "%22s", p3->country);
+            fprintf(file, "%11d", p3->score);
+            fprintf(file, "%15d", p3->numWordsFound);
+            fprintf(file, "%20d\n", p3->numWordsAdded);
             strcpy(flagname, p3->first_name);
             printf("\n%s", flagname);
 
            continue;
         }
         if(scoreArr[i] == p4->score && (strcmp(p4->first_name, flagname) < 0 || strcmp(p4->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p4->first_name);
-            fprintf(file, "\t%s\t", p4->last_name);
-            fprintf(file, "\t%s\t", p4->country);
-            fprintf(file, "\t%d\t", p4->score);
-            fprintf(file, "\t%d\t", p4->numWordsFound);
-            fprintf(file, "\t%d\n", p4->numWordsAdded);
+            fprintf(file, "\t%3s\t", p4->first_name);
+            fprintf(file, "%22s", p4->last_name);
+            fprintf(file, "%22s", p4->country);
+            fprintf(file, "%11d", p4->score);
+            fprintf(file, "%15d", p4->numWordsFound);
+            fprintf(file, "%20d\n", p4->numWordsAdded);
             strcpy(flagname, p4->first_name);
             printf("\n%s", flagname);
  
             continue;
         }
         if(scoreArr[i] == p5->score && (strcmp(p5->first_name, flagname) < 0 || strcmp(p5->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p5->first_name);
-            fprintf(file, "\t%s\t", p5->last_name);
-            fprintf(file, "\t%s\t", p5->country);
-            fprintf(file, "\t%d\t", p5->score);
-            fprintf(file, "\t%d\t", p5->numWordsFound);
-            fprintf(file, "\t%d\n", p5->numWordsAdded);
+            fprintf(file, "\t%3s\t", p5->first_name);
+            fprintf(file, "%22s", p5->last_name);
+            fprintf(file, "%22s", p5->country);
+            fprintf(file, "%11d", p5->score);
+            fprintf(file, "%15d", p5->numWordsFound);
+            fprintf(file, "%20d\n", p5->numWordsAdded);
             strcpy(flagname, p5->first_name);
             printf("\n%s", flagname);
 
             continue;
         }
         if(scoreArr[i] == newPlayer->score && (strcmp(newPlayer->first_name, flagname) < 0 || strcmp(newPlayer->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", newPlayer->first_name);
-            fprintf(file, "\t%s\t", newPlayer->last_name);
-            fprintf(file, "\t%s\t", newPlayer->country);
-            fprintf(file, "\t%d\t", newPlayer->score);
-            fprintf(file, "\t%d\t", newPlayer->numWordsFound);
-            fprintf(file, "\t%d\n", newPlayer->numWordsAdded);
+            fprintf(file, "\t%3s\t", newPlayer->first_name);
+            fprintf(file, "%22s", newPlayer->last_name);
+            fprintf(file, "%22s", newPlayer->country);
+            fprintf(file, "%11d", newPlayer->score);
+            fprintf(file, "%15d", newPlayer->numWordsFound);
+            fprintf(file, "%20d\n", newPlayer->numWordsAdded);
             strcpy(flagname, newPlayer->first_name);
             printf("\n%s", flagname);
 
            continue;
         }
     }
-
-    realloc(p1,1001);
-    realloc(p2,1001);
-    realloc(p3,1001);
-    realloc(p4,1001);
-    realloc(p5,1001);
 
     fclose(file);
 
@@ -440,14 +434,15 @@ void readScoresMulti(char* filename, struct player* newPlayer){
 
     //arranging placements
 
-    file = fopen("singlePlayer.txt", "w");
+    file = fopen("multiPlayer.txt", "w");
     fprintf(file, "%s", "\tFirst name\t|");
     fprintf(file, "%s", "\tLast name\t|");
     fprintf(file, "%s", "\tCountry   |");
     fprintf(file, "%s", " Score |");
+    fprintf(file, "%s", "  Win/lose  |");
     fprintf(file, "%s", " Number of Words Found |");
     fprintf(file, "%s\n", " Number of Added to Dictionary");
-    fprintf(file , "-----------------------------------------------------------------------------------------------------------------------------\n");
+    fprintf(file , "--------------------------------------------------------------------------------------------------------------------------------------------\n");
 
     char flagname[20] = "";
 
@@ -455,78 +450,78 @@ void readScoresMulti(char* filename, struct player* newPlayer){
     for(int i = 0; i < 5; i++){
  
         if(scoreArr[i] == p1->score && (strcmp(p1->first_name, flagname) < 0 || strcmp(p1->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p1->first_name);
-            fprintf(file, "\t%s\t", p1->last_name);
-            fprintf(file, "\t%s\t", p1->country);
-            fprintf(file, "\t%d\t", p1->score);
-            fprintf(file, "\t%s\t", p1->outcome);
-            fprintf(file, "\t%d\t", p1->numWordsFound);
-            fprintf(file, "\t%d\n", p1->numWordsAdded);
+            fprintf(file, "\t%3s\t", p1->first_name);
+            fprintf(file, "%23s", p1->last_name);
+            fprintf(file, "%22s", p1->country);
+            fprintf(file, "%11d", p1->score);
+            fprintf(file, "%11s", p1->outcome);
+            fprintf(file, "%20d", p1->numWordsFound);
+            fprintf(file, "%20d\n", p1->numWordsAdded);
             strcpy(flagname, p1->first_name);
             printf("\n%s", flagname);
 
             continue;
         }
         if(scoreArr[i] == p2->score && (strcmp(p2->first_name, flagname) < 0 || strcmp(p2->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p2->first_name);
-            fprintf(file, "\t%s\t", p2->last_name);
-            fprintf(file, "\t%s\t", p2->country);
-            fprintf(file, "\t%d\t", p2->score);
-            fprintf(file, "\t%s\t", p2->outcome);
-            fprintf(file, "\t%d\t", p2->numWordsFound);
-            fprintf(file, "\t%d\n", p2->numWordsAdded);
+            fprintf(file, "\t%3s\t", p2->first_name);
+            fprintf(file, "%23s", p2->last_name);
+            fprintf(file, "%22s", p2->country);
+            fprintf(file, "%11d", p2->score);
+            fprintf(file, "%11s", p2->outcome);
+            fprintf(file, "%20d", p2->numWordsFound);
+            fprintf(file, "%20d\n", p2->numWordsAdded);
             strcpy(flagname, p2->first_name);
             printf("\n%s", flagname);
             
             continue;
         }
         if(scoreArr[i] == p3->score && (strcmp(p3->first_name, flagname) < 0 || strcmp(p3->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p3->first_name);
-            fprintf(file, "\t%s\t", p3->last_name);
-            fprintf(file, "\t%s\t", p3->country);
-            fprintf(file, "\t%d\t", p3->score);
-            fprintf(file, "\t%s\t", p3->outcome);
-            fprintf(file, "\t%d\t", p3->numWordsFound);
-            fprintf(file, "\t%d\n", p3->numWordsAdded);
+            fprintf(file, "\t%3s\t", p3->first_name);
+            fprintf(file, "%15s", p3->last_name);
+            fprintf(file, "%22s", p3->country);
+            fprintf(file, "%11d", p3->score);
+            fprintf(file, "%11s", p3->outcome);
+            fprintf(file, "%20d", p3->numWordsFound);
+            fprintf(file, "%20d\n", p3->numWordsAdded);
             strcpy(flagname, p3->first_name);
             printf("\n%s", flagname);
 
            continue;
         }
         if(scoreArr[i] == p4->score && (strcmp(p4->first_name, flagname) < 0 || strcmp(p4->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p4->first_name);
-            fprintf(file, "\t%s\t", p4->last_name);
-            fprintf(file, "\t%s\t", p4->country);
-            fprintf(file, "\t%d\t", p4->score);
-            fprintf(file, "\t%s\t", p4->outcome);
-            fprintf(file, "\t%d\t", p4->numWordsFound);
-            fprintf(file, "\t%d\n", p4->numWordsAdded);
+            fprintf(file, "\t%3s\t", p4->first_name);
+            fprintf(file, "%23s", p4->last_name);
+            fprintf(file, "%22s", p4->country);
+            fprintf(file, "%11d", p4->score);
+            fprintf(file, "%11s", p4->outcome);
+            fprintf(file, "%20d", p4->numWordsFound);
+            fprintf(file, "%20d\n", p4->numWordsAdded);
             strcpy(flagname, p4->first_name);
             printf("\n%s", flagname);
  
             continue;
         }
         if(scoreArr[i] == p5->score && (strcmp(p5->first_name, flagname) < 0 || strcmp(p5->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", p5->first_name);
-            fprintf(file, "\t%s\t", p5->last_name);
-            fprintf(file, "\t%s\t", p5->country);
-            fprintf(file, "\t%d\t", p5->score);
-            fprintf(file, "\t%s\t", p5->outcome);
-            fprintf(file, "\t%d\t", p5->numWordsFound);
-            fprintf(file, "\t%d\n", p5->numWordsAdded);
+            fprintf(file, "\t%3s\t", p5->first_name);
+            fprintf(file, "%23s", p5->last_name);
+            fprintf(file, "%22s", p5->country);
+            fprintf(file, "%11d", p5->score);
+            fprintf(file, "%11s", p5->outcome);
+            fprintf(file, "%20d", p5->numWordsFound);
+            fprintf(file, "%20d\n", p5->numWordsAdded);
             strcpy(flagname, p5->first_name);
             printf("\n%s", flagname);
 
             continue;
         }
         if(scoreArr[i] == newPlayer->score && (strcmp(newPlayer->first_name, flagname) < 0 || strcmp(newPlayer->first_name, flagname) > 0)){
-            fprintf(file, "\t%s\t", newPlayer->first_name);
-            fprintf(file, "\t%s\t", newPlayer->last_name);
-            fprintf(file, "\t%s\t", newPlayer->country);
-            fprintf(file, "\t%d\t", newPlayer->score);
-            fprintf(file, "\t%s\t", newPlayer->outcome);
-            fprintf(file, "\t%d\t", newPlayer->numWordsFound);
-            fprintf(file, "\t%d\n", newPlayer->numWordsAdded);
+            fprintf(file, "\t%3s\t", newPlayer->first_name);
+            fprintf(file, "%23s", newPlayer->last_name);
+            fprintf(file, "%22s", newPlayer->country);
+            fprintf(file, "%11d", newPlayer->score);
+            fprintf(file, "%11s", newPlayer->outcome);
+            fprintf(file, "%20d", newPlayer->numWordsFound);
+            fprintf(file, "%20d\n", newPlayer->numWordsAdded);
             strcpy(flagname, newPlayer->first_name);
             printf("\n%s", flagname);
 
@@ -574,17 +569,17 @@ void multiPlayerScoreboard(struct player *playerArr){
     initializeMultiTable("multiPlayer.txt");
 
     //adding in final score value to final index
-    readScoresMulti("singlePlayer.txt", playerArr);
+    readScoresMulti("multiPlayer.txt", playerArr);
 
 }
 
-char* single_scoreboardLine(char* filename){
-    char* stringLine
+// char* single_scoreboardLine(char* filename){
+//     char* stringLine
 
-}
-char* multi_scoreboardLine(){
+// }
+// char* multi_scoreboardLine(){
 
-}
+// }
 
 
 //demo driver for testing sequence, not for later use
