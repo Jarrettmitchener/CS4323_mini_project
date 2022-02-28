@@ -27,8 +27,18 @@ typedef struct {
     int wordsAdded;    
 } player;
 
+struct playerSend {
+    char firstname[20];
+    char lastname[20];
+    char country[20];
+    int score;
+    char outcome[6];
+    int wordsFound;
+    int wordsAdded;    
+};
 
-void wordProcessing();
+
+struct playerSend* wordProcessing();
 char* randomFile();
 int randomLetter(char* letters);
 int isValidWordAndScore(char* prev, char* new, char* letters, char** used);
@@ -51,13 +61,14 @@ int fileWordsLength = 0;
 
 
 int main(){
-    wordProcessing(1);
+    struct playerSend* e = wordProcessing(2);
+    printf("%s", e->firstname);
 }
 
 
 // =============================================================================================================================================================================================================
 // Starts the game. gamemode refers to single player of multi player. 1 for Single, 2 for Multi.
-void wordProcessing(int gamemode){
+struct playerSend* wordProcessing(int gamemode){
     // Initializes players and creates all needed variables.
     P1.score = 0; P1.wordsAdded = 0; P1.wordsFound = 0;
     P2.score = 0; P2.wordsAdded = 0; P2.wordsFound = 0;
@@ -289,21 +300,41 @@ void wordProcessing(int gamemode){
 
 
     // Game End
+    struct playerSend* testPlayer1 = malloc(1000);
+
     if (players[0].score > players[1].score){
         strcpy(players[0].outcome, "Win");
         strcpy(players[1].outcome, "Lose");
-        printf("Player 1 Wins!\n%s\t%s\t%s\t%d\t%s\t%d\t%d", players[0].firstname, players[0].lastname, players[0].country, players[0].score,
-            players[0].outcome, players[0].wordsFound, players[0].wordsAdded);
+
+        strcpy(testPlayer1->firstname, players[0].firstname);
+        strcpy(testPlayer1->lastname, players[0].lastname);
+        strcpy(testPlayer1->country, players[0].country);
+        strcpy(testPlayer1->outcome, players[0].outcome);
+        testPlayer1->score = players[0].score;
+        testPlayer1->wordsAdded = players[0].wordsAdded;
+        testPlayer1->wordsFound = players[0].wordsFound;
+        // printf("Player 1 Wins!\n%s\t%s\t%s\t%d\t%s\t%d\t%d", players[0].firstname, players[0].lastname, players[0].country, players[0].score,
+        //     players[0].outcome, players[0].wordsFound, players[0].wordsAdded);
     }
     else{
         strcpy(players[1].outcome, "Win");
         strcpy(players[0].outcome, "Lose");
-        printf("Player 2 Wins!\n%s\t%s\t%s\t%d\t%s\t%d\t%d", players[1].firstname, players[1].lastname, players[1].country, players[1].score,
-        players[1].outcome, players[1].wordsFound, players[1].wordsAdded);
+
+        strcpy(testPlayer1->firstname, players[1].firstname);
+        strcpy(testPlayer1->lastname, players[1].lastname);
+        strcpy(testPlayer1->country, players[1].country);
+        strcpy(testPlayer1->outcome, players[1].outcome);
+        testPlayer1->score = players[1].score;
+        testPlayer1->wordsAdded = players[1].wordsAdded;
+        testPlayer1->wordsFound = players[1].wordsFound;
+        // printf("Player 2 Wins!\n%s\t%s\t%s\t%d\t%s\t%d\t%d", players[1].firstname, players[1].lastname, players[1].country, players[1].score,
+        // players[1].outcome, players[1].wordsFound, players[1].wordsAdded);
     }
 
     free(usedWords);
     free(players);
+
+    return testPlayer1;
 }
 // =============================================================================================================================================================================================================
 
