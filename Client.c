@@ -10,6 +10,13 @@
 #define PORT 4444
 #define DELAY 500
 
+void displayMenu()
+{
+	printf("1.	Single Player Mode\n");
+	printf("2.	Multi-Players Mode\n");
+	printf("3.	Exit\n");
+}
+
 int main()
 {
 
@@ -61,7 +68,7 @@ int main()
         }
 		else
 		{
-			printf("main menu options would be printed\n");
+			displayMenu();
 		}
     }
 
@@ -96,12 +103,12 @@ int main()
 			//main menu printed
 			if(strcmp(buffer, "123") == 0)
 			{
-				printf("Main menu would be displayed\n");
+				displayMenu();
 			}
 			//multiplayer game 
 			else if(strcmp(buffer, "222") == 0)
 			{
-				printf("Multiplayer menu would be displayed\n");
+				printf("Multiplayer Mode:\n");
 				multiGameStart = 1;
 			}
 			else if(strcmp(buffer, "000") == 0)
@@ -125,21 +132,23 @@ int main()
 			}
 			else if(strcmp(buffer, "888") == 0)
 			{
-				printf("would display scoreboard s scoreboard\n");
+				printf("ScoreBoard\n");
 				int counter = 0;
 				for(int i = 0; i < counter; i++)
 				{
-					//prints the stream one by one
+					recv(clientSocket, buffer, 1024, 0);
+					printf("%s\n", buffer);
 				}
 				//would then receive 5 scoreboard streams
 			}
 			else if(strcmp(buffer, "999") == 0)
 			{
-				printf("would display multiplayer scoreboard\n");
+				printf("ScoreBoard\n");
 				int counter = 0;
 				for(int i = 0; i < counter; i++)
 				{
-					//prints the stream one by one
+					recv(clientSocket, buffer, 1024, 0);
+					printf("%s\n", buffer);
 				}
 				//would then receive 5 scoreboard streams
 			}
@@ -216,7 +225,7 @@ int main()
 				recv(clientSocket, buffer, 1024, 0);
 				int num = atoi(buffer);
 				
-				printf("This would be the header of the scoreboard\n");
+				printf("This would be the header of the scoreboard\n");//..........................................................................................
 				for(int i = 0; i < num; i++)
 				{
 					//usleep(500);
@@ -348,7 +357,7 @@ int main()
 					}
 					else
 					{
-						printf("Your was Invalid! Shame!\n");
+						printf("Your word was Invalid! Shame!\n");
 					}
 					printf("waiting on opponent...\n");
 
