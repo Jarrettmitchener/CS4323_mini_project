@@ -39,6 +39,7 @@ int isValidWordBeginAndScore(int letterSpot, char* new, char* letters, char** us
 int hasBeenUsed(char* new, char** words);
 int scoring(char* word);
 char* getCPUWord(int numGuesses);
+int ok(char* word);
 
 
 player P1, P2, CPU;
@@ -50,9 +51,9 @@ int fileWordsLength = 0;
 
 
 int main(){
-    char* z = "zulu";
-    int i = checkFile(z, "dictionary.txt");
-    printf("INT: %d", i);
+    char* z = "afdsadfasdf";
+    int i = ok(z);
+    printf("INT: %d\n", i);
     // wordProcessing(1);
 }
 
@@ -349,17 +350,44 @@ int checkFile(char* word, char* filename){
     }
     while (fgets(checkWord, 20, dict) && check == 0){
         // Removes the \n at the ends of some words from fgets()
+        //printf("line: %s\n", checkWord);
         if (checkWord[strlen(checkWord) - 1] == '\n'){
             checkWord[strlen(checkWord) - 1] = '\0';
+            
         }
-        printf("Dict: %s  Word: %s\n", checkWord, word);
+        
+        
+        //printf("Dict: %s  Word: %s\n", checkWord, word);
         if (strcmp(word, checkWord) == 0){
             check = 5;
         }
+        memset(checkWord, 0, 20);
     }
 
     fclose(dict);
     return check;
+}
+//kms
+int ok(char* word)
+{
+    int found = 0;
+    FILE *file;
+    char dictline[1024];
+
+    file = fopen("dictionary.txt", "r");
+
+    while(fscanf(file, "%s", dictline) != EOF)
+    {
+        char line[1024];
+        
+        //printf("%s\n", dictline);
+        
+        if(strcmp(dictline, word) == 0)
+        {
+            printf("FINALLY\n");
+        }
+        memset(dictline, 0, 1024);
+    }
 }
 
 
