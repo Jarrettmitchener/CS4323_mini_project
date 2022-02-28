@@ -39,7 +39,7 @@ int isValidWordBeginAndScore(int letterSpot, char* new, char* letters, char** us
 int hasBeenUsed(char* new, char** words);
 int scoring(char* word);
 char* getCPUWord(int numGuesses);
-int ok(char* word);
+double getTime();
 
 
 player P1, P2, CPU;
@@ -51,10 +51,7 @@ int fileWordsLength = 0;
 
 
 int main(){
-    char* z = "afdsadfasdf";
-    int i = ok(z);
-    printf("INT: %d\n", i);
-    // wordProcessing(1);
+    wordProcessing(1);
 }
 
 
@@ -68,7 +65,6 @@ void wordProcessing(int gamemode){
     int giveScore, letterSpot, passes = 0, playerTurn = 0, numWords = 0, failedGuesses = 0;
     char entry[20];
     char storage[50][20];
-    clock_t timeCheck;
     double timeTaken;
     int firstLetter;
 
@@ -145,7 +141,7 @@ void wordProcessing(int gamemode){
             if (passes >= 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
             else if (numWords == 0) { printf("You have to start the first word with '%c'\n", validLetters[firstLetter]); }
 
-            timeCheck = clock();
+            timeTaken = getTime();
             // Player Turn
             if (playerTurn == 0) { scanf("%s", entry); }
             // CPU Turn
@@ -154,12 +150,10 @@ void wordProcessing(int gamemode){
                 printf("%s\n", entry);
                 cpuGuesses++; 
             }
-            timeCheck = clock() - timeCheck;
-            timeTaken = ((double)timeCheck) / CLOCKS_PER_SEC;
-            printf("TIME%f", timeTaken);
+            timeTaken = getTime() - timeTaken;
 
             // If user took more than 4 minutes to input, then pass.
-            if (timeTaken > 240){
+            if (timeTaken > 30){
                 printf("\nTook more than 4 minutes to answer. Passing.");
                 passes++;
             }
@@ -241,11 +235,9 @@ void wordProcessing(int gamemode){
             printf("\nEnter a Word. You have 4 minutes. '/' if you want to pass.\n");
             if (passes >= 2) { printf("You don't have to start your word with any specific letter(s)\n"); }
             else if (numWords == 0) { printf("You have to start the first word with '%c'\n", validLetters[firstLetter]); }
-            timeCheck = clock();
+            timeTaken = getTime();
             scanf("%s", entry);
-            timeCheck = clock() - timeCheck;
-            timeTaken = ((double)timeCheck) / CLOCKS_PER_SEC;
-            printf("TIME%f", timeTaken);
+            timeTaken = getTime() - timeTaken;
 
             // If user took more than 4 minutes to input, then pass.
             if (timeTaken > 240){
@@ -346,48 +338,17 @@ int checkFile(char* word, char* filename){
     int check = 0;
     // Skips the first line of an input_XX.txt file
     if (filename[0] == 'i'){
-        fgets(checkWord, 20, dict);
+        fscanf(dict, "%s", checkWord);
     }
-    while (fgets(checkWord, 20, dict) && check == 0){
+    while (fscanf(dict, "%s", checkWord) != EOF && check == 0){
         // Removes the \n at the ends of some words from fgets()
-        //printf("line: %s\n", checkWord);
-        if (checkWord[strlen(checkWord) - 1] == '\n'){
-            checkWord[strlen(checkWord) - 1] = '\0';
-            
-        }
-        
-        
-        //printf("Dict: %s  Word: %s\n", checkWord, word);
-        if (strcmp(word, checkWord) == 0){
+        if (strcasecmp(word, checkWord) == 0){
             check = 5;
         }
-        memset(checkWord, 0, 20);
     }
 
     fclose(dict);
     return check;
-}
-//kms
-int ok(char* word)
-{
-    int found = 0;
-    FILE *file;
-    char dictline[1024];
-
-    file = fopen("dictionary.txt", "r");
-
-    while(fscanf(file, "%s", dictline) != EOF)
-    {
-        char line[1024];
-        
-        //printf("%s\n", dictline);
-        
-        if(strcmp(dictline, word) == 0)
-        {
-            printf("FINALLY\n");
-        }
-        memset(dictline, 0, 1024);
-    }
 }
 
 
@@ -619,3 +580,13 @@ char* getCPUWord(int numGuesses){
         return result;
     }
 }
+
+
+
+// Obtains the time at the time the function is called.
+double getTime(){
+    struct timespec here;
+    clock_gettime(CLOCK_REALTIME, &here);
+    return here.tv_sec + here.tv_nsec*1e-9;
+}
+
