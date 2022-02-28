@@ -212,9 +212,12 @@ int main()
 
 					
 				}
-
+				memset(buffer, 0, 1024);
+				recv(clientSocket, buffer, 1024, 0);
+				int num = atoi(buffer);
+				
 				printf("This would be the header of the scoreboard\n");
-				for(int i = 0; i < 5; i++)
+				for(int i = 0; i < num; i++)
 				{
 					//usleep(500);
 					//printf("this is after the sleep\n");
@@ -351,6 +354,17 @@ int main()
 
 					
 				}
+				//receives the number of people on scoreboard
+				memset(buffer, 0, 1024);
+				recv(clientSocket, buffer, 1024, 0);
+				int numOfPeopleOnScoreboard = atoi(buffer);
+
+				for(int i = 0; i< numOfPeopleOnScoreboard; i++)
+				{
+					recv(clientSocket, buffer, 1024, 0);
+					printf("%s\n", buffer);
+				}
+
 			}
 		}
 		

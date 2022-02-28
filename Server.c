@@ -60,10 +60,10 @@ int main()
 	//if server can't make connection
 	if(sockfd < 0)
 	{
-		printf("[-]Error in connection.\n");
+		printf("Error in Establishing connection\n");
 		exit(1);
 	}
-	printf("[+]Server Socket is created.\n");
+	printf("Server socket was created successfully\n");
 
 	//serts server address properties
 	memset(&serverAddr, '\0', sizeof(serverAddr));
@@ -77,19 +77,16 @@ int main()
 	//if socket doesn't create correctly, close
 	if(ret < 0)
 	{
-		printf("[-]Error in binding.\n");
+		printf("Binding failed\n");
 		exit(1);
 	}
-	printf("[+]Bind to port %d\n", 4444);
+	printf("Binded to port %d\n", 4444);
 
-	if(listen(sockfd, 10) == 0)
+	if(listen(sockfd, 10) != 0)
 	{
-		printf("[+]Listening....\n");
+		printf("Error in binding\n");
 	}
-	else
-	{
-		printf("[-]Error in binding.\n");
-	}
+
 
 	//--------------------------------beginning of main server while loop-----------------------//
 	while(shutdown == false)
@@ -104,7 +101,7 @@ int main()
 			close(newSocket);
 			exit(1);
 		}
-		printf("Connection accepted from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
+		printf("%s:%d Connected to the server\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 		
 		int d = getNumConnected();
 		setConnectedFlag(d + 1);
@@ -154,14 +151,15 @@ int main()
 
 				//printf("buffer at begging of loop: %s\n", buffer);
 				recv(newSocket, buffer, 1024, 0);
-				printf("Client with port %i sent: %s\n",ntohs(newAddr.sin_port), buffer);
+				printf("Port %i sent: %s\n",ntohs(newAddr.sin_port), buffer);
 				//printf("c comparison: %i\n", strcmp(buffer, "c"));
 
 				//printf("occupied status: %i\n", getOccupied());
 				//printf("MultiFlag status: %i\n", getMultiFlag());
 				//printf("gameInProgress status: %i\n", gameInProgress);
 
-				if(strcmp(buffer, ":exit") == 0)
+				//client disconnect
+				if(strcmp(buffer, "3") == 0)
 				{
 					printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 					d = getNumConnected();
@@ -173,7 +171,7 @@ int main()
 				//and client chose single player
 				else if (getOccupied() == 1 && getMultiFlag() == 1 && gameInProgress == 0 && strcmp(buffer, "1") == 0)
 				{
-					printf("Client with port: %d is trying to play a game\nbut server is waiting on \nSomeone to play a multiplayer game\n", ntohs(newAddr.sin_port));
+					printf("Port: %d is trying to play a game\nbut server is waiting on \nSomeone to play a multiplayer game\n", ntohs(newAddr.sin_port));
 					strcpy(buffer, "001");
 					//printf("what is suppose to be sent: %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -184,7 +182,7 @@ int main()
 				//and client chose multi player
 				else if (getOccupied() == 1 && getMultiFlag() == 1 && gameInProgress == 0 && strcmp(buffer, "2") == 0)
 				{
-					printf("Client with port: %d is trying to play a\nmultiplayer game when another player is\nwaiting to play\n", ntohs(newAddr.sin_port));
+					printf("Port: %d is trying to play a\nmultiplayer game when another player is\nwaiting to play\n", ntohs(newAddr.sin_port));
 					strcpy(buffer, "022");
 					//printf("what is suppose to be sent: %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -196,7 +194,7 @@ int main()
 					//generates the random turn variable to be either 0 or 1, then uses playerID to determine when a player goes
 					srand(time(NULL));
 					int randTurn = rand() % 2;
-					printf("the random variable is :%i\n",randTurn);
+					printf("Player %i will go first\n",randTurn);
 					updateTurnFlag(randTurn);
 
 					//sets playerID
@@ -205,7 +203,7 @@ int main()
 				//if two people are in multi player gaming
 				else if (getOccupied() == 1 && getMultiFlag() == 2 && gameInProgress == 0)
 				{
-					printf("Client with port: %d is trying to play a game\nbut multiplayer game is already active\n", ntohs(newAddr.sin_port));
+					printf("Port: %d is trying to play a game\nbut multiplayer game is already active\n", ntohs(newAddr.sin_port));
 					strcpy(buffer, "002");
 					//printf("what is suppose to be sent: %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -216,7 +214,7 @@ int main()
 				else if(getOccupied() == 1 && gameInProgress == 0)
 				{
 					
-					printf("Client with port: %d is trying to play a game\nbut server is busy with other client(s)\n", ntohs(newAddr.sin_port));
+					printf("Port: %d is trying to play a game\nbut server is busy with other client(s)\n\n", ntohs(newAddr.sin_port));
 					strcpy(buffer, "000");
 					//printf("what is suppose to be sent: %s\n", buffer);
 					send(newSocket, buffer, strlen(buffer), 0);
@@ -225,19 +223,7 @@ int main()
 
 				}
 
-				
-
-				//this doesnt work correctly
-				else if(strcmp(buffer, "3") == 0)
-				{
-					printf("Client has decided to shut down server\n");
-					close(newSocket);
-					shutdown = true;
-					//printf("this is before the exit method is called\n");
-					execlp("some", "program", NULL);
-					_exit(1);
-					
-				}
+				//debug command
 				else if(strcmp(buffer, "c") == 0)
 				{
 					printf("amount connected in this fork: %i\n", getNumConnected());
@@ -285,7 +271,7 @@ int main()
 						bzero(buf, sizeof(buf));
 						if(gameCont == 0)
 						{
-							printf("Client with port: %d game has ended\n", ntohs(newAddr.sin_port));
+							printf("Port: %d game has ended\n", ntohs(newAddr.sin_port));
 							usleep(DELAY);
 							strcpy(buf, "1000");
 							send(newSocket, buf, strlen(buf), 0);
@@ -301,7 +287,7 @@ int main()
 
 
 						recv(newSocket, buffer, 1024, 0);
-						printf("Client with port: %i sent word: %s\n",ntohs(newAddr.sin_port), buffer);
+						printf("Port: %i sent word: %s\n",ntohs(newAddr.sin_port), buffer);
 						strcpy(buffer, "5");
 						send(newSocket, buffer, strlen(buffer), 0);
 						bzero(buffer, sizeof(buffer));
@@ -322,19 +308,27 @@ int main()
 						memset(buffer, 0, 1024);
 						recv(newSocket, buffer, 1024, 0);
 						strcpy(firstname, buffer);
-						printf("Client with port: %i first name: %s\n",ntohs(newAddr.sin_port), firstname);
+						printf("Port: %i first name: %s\n",ntohs(newAddr.sin_port), firstname);
 
 						memset(buffer, 0, 1024);
 						recv(newSocket, buffer, 1024, 0);
 						strcpy(lastname, buffer);
-						printf("Client with port: %i last name: %s\n",ntohs(newAddr.sin_port), lastname);
+						printf("Port: %i last name: %s\n",ntohs(newAddr.sin_port), lastname);
 
 						memset(buffer, 0, 1024);
 						recv(newSocket, buffer, 1024, 0);
 						strcpy(country, buffer);
-						printf("Client with port: %i country: %s\n",ntohs(newAddr.sin_port), country);
+						printf("Port: %i country: %s\n",ntohs(newAddr.sin_port), country);
 					}
-					for(int i = 0; i < 5; i++)
+
+					//sends number of people on the scoreboard
+					int numOfPeopleOnScoreboard = 5;
+					sprintf(buffer, "%d", numOfPeopleOnScoreboard);
+					usleep(DELAY);
+					send(newSocket, buffer, strlen(buffer), 0);
+
+					memset(buffer, 0, 1024);
+					for(int i = 0; i < numOfPeopleOnScoreboard; i++)
 					{
 						
 						//sleep(1);
@@ -349,7 +343,7 @@ int main()
 					printf("Finished sending scoreboard to client %d\n",ntohs(newAddr.sin_port));
 
 					//updates occupied status of server
-					printf("Client with port: %i is finished with their game\n", ntohs(newAddr.sin_port));
+					printf("Port: %i is finished with their game\n", ntohs(newAddr.sin_port));
 					printf("Their final score was %i\n", 69);
 					
 					//updates occupied status of server
@@ -358,7 +352,7 @@ int main()
 				//-----------------------------------------Multiplayer Section------------------------------------------//
 				else if(strcmp(buffer, "2") == 0)
 				{
-					printf("Client with port %d has decided to play multiplayer\n", ntohs(newAddr.sin_port));
+					printf("Port %d has decided to play multiplayer\n", ntohs(newAddr.sin_port));
 					gameInProgress = 1;
 					strcpy(buffer, "222");
 					if (getMultiFlag() == 0)
@@ -381,16 +375,7 @@ int main()
 					playerID = 0;
 					
 				}
-				//this command isnt really important, will be cut later
-				else if(strcmp(buffer, "cancel") == 0)
-				{
-					printf("Client has decided to end game\n");
-					gameInProgress = 0;
-					//printf("what is suppose to be sent to the client %s\n", buffer);
-					send(newSocket, buffer, strlen(buffer), 0);
-					setOccupiedFlag(0);
-					bzero(buffer, sizeof(buffer));
-				}
+				
 				else
 				{
 					//printf("what is suppose to be sent to the client %s\n", buffer);
@@ -401,7 +386,7 @@ int main()
 				//--------------------------ACTUAL MULTIPLAYER CODE STARTS FOR THE GAME-----------------------------//
 				if(multiGameStart == 1)
 				{
-					printf("made it to multiplayer code area\n");
+					//printf("made it to multiplayer code area\n");
 					memset(buffer, 0, 1024);
 					usleep(DELAY);
 
@@ -426,17 +411,18 @@ int main()
 						bzero(buffer, sizeof(buffer));
 						waiting = 1;
 					}
-					printf("waiting value is: %i\n", waiting);
+					//printf("waiting value is: %i\n", waiting);
 					while(waiting == 1)
 					{
 						if(getMultiFlag() == 2)
 						{
-							printf("we have made it out of the loop!!!!\n");
+							//printf("we have made it out of the loop!!!!\n");
 							break;
 						}
 						sleep(1);
 					}
 					usleep(DELAY);
+					//this is just dummy code so that the one client will have to wait
 					strcpy(buffer, "pleaseWork");
 					send(newSocket, buffer, strlen(buffer), 0);
 					bzero(buffer, sizeof(buffer));
@@ -500,20 +486,52 @@ int main()
 							sleep(1);
 							//will run until previous player finishes their turn
 						}
-						printf("%s's turn now\n", firstname);
+						//printf("%s's turn now\n", firstname);
 
 						//checks if game is still going on
 						usleep(DELAY);
+						//printf("\nGet game flag is: %i\n\n", getGameFlag());
+
+						//if the first players game is over, do this so
+						//game ends correctly
+						if(getGameFlag() == 2)
+						{
+							
+							strcpy(buffer, "1");
+							send(newSocket, buffer, strlen(buffer), 0);
+							bzero(buffer, sizeof(buffer));
+							printf("Port %s game has ended\n", firstname);
+							setOccupiedFlag(0);
+							updateGameFlag(0);
+							break;
+						}
+						usleep(DELAY);
+						//if game over flag is set high, begin end game sequence
 						if(getGameFlag() == 1)
 						{
 							//game is over, break loop
 							strcpy(buffer, "1");
 							send(newSocket, buffer, strlen(buffer), 0);
 							bzero(buffer, sizeof(buffer));
+							printf("Port %s game has ended\n", firstname);
+
+							//lets other client get out of the loop so that they can exit correctly
+							if(getTurnFlag() == 0)
+							{
+								updateTurnFlag(1);
+							}
+							else
+							{
+								updateTurnFlag(0);
+							}
+							//resets game flags
+							updateMultiFlag(0);
+							updateGameFlag(2);
 							break;
 						}
 						else
 						{
+							usleep(DELAY);
 							strcpy(buffer, "0");
 							send(newSocket, buffer, strlen(buffer), 0);
 							bzero(buffer, sizeof(buffer));
@@ -585,7 +603,7 @@ int main()
 
 						gameCounter++;
 						//ends game, just for testing
-						if(gameCounter > 3)
+						if(gameCounter > 2)
 						{
 							updateGameFlag(1);
 						}
@@ -603,6 +621,28 @@ int main()
 
 
 					}
+					int finalscore = 420;
+					printf("%s's final score: %i", firstname, finalscore);
+					int ifAddScoreboard = 1;//dummy var that will determine if we add to scoreboard or not
+
+					int numOfPeopleOnScoreboard = 3;
+					
+					usleep(DELAY);
+					memset(buffer, 0, 1024);
+					sprintf(buffer, "%d", numOfPeopleOnScoreboard);
+					send(newSocket, buffer, strlen(buffer), 0);
+					bzero(buffer, sizeof(buffer));
+
+					for(int i = 0; i < numOfPeopleOnScoreboard; i++)
+					{
+						usleep(DELAY);
+						//printf("after sleep at beginning\n");
+						strcpy(buffer, "Long String but for multiplayer inbound");
+						send(newSocket, buffer, strlen(buffer), 0);
+						bzero(buffer, sizeof(buffer));
+						memset(buffer, 0, 1024);
+					}
+
 					
 				}
 				
@@ -610,12 +650,17 @@ int main()
 			
 			
 		}
+		//parent
+		else
+		{
+
+		}
 		
 
 
 
 	}
-	printf("end of the program\n");
+	
 	close(newSocket);
 
 
