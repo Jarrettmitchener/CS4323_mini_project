@@ -22,10 +22,10 @@ int main()
 	clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if(clientSocket < 0)
     {
-		printf("[-]Error in connection.\n");
+		printf("Error in socket creation.\n");
 		exit(1);
 	}
-	printf("[+]Client Socket is created.\n");
+	
 
 	memset(&serverAddr, '\0', sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
@@ -35,24 +35,24 @@ int main()
 	ret = connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	if(ret < 0)
     {
-		printf("[-]Error in connection.\n");
+		printf("Couldn't connect to Server\n");
 		exit(1);
 	}
-	printf("[+]Connected to Server.\n");
+	printf("Connected to Server\n");
 
 	//does intitial cleanup of first message sending
 
     //intial handshake
     if(recv(clientSocket, buffer, 1024, 0) < 0)
     {
-        printf("[-]Error in receiving data.\n");
+        printf("couldn't receive data from server\n");
     }
     else
     {
 		
-        printf("Server sent: %s\n", buffer);
+        //printf("Server sent: %s\n", buffer);
         int x = atoi(buffer);
-        printf("x = %i\n", x);
+        //printf("x = %i\n", x);
         if(x == 12345)
         {
             close(clientSocket);
@@ -78,16 +78,12 @@ int main()
 		scanf("%s", &buffer[0]);
 		send(clientSocket, buffer, strlen(buffer), 0);
 
-		if(strcmp(buffer, ":exit") == 0){
+		if(strcmp(buffer, "3") == 0){
 			close(clientSocket);
 			printf("[-]Disconnected from server.\n");
 			exit(1);
 		}
-        if(strcmp(buffer, "3") == 0){
-			close(clientSocket);
-			printf("[-]Disconnected by client.\n");
-			exit(1);
-		}
+        
 
 		if(recv(clientSocket, buffer, 1024, 0) < 0)
         {
@@ -313,12 +309,12 @@ int main()
 					if(playerID == 0)
 					{
 						printf("Your score is: %s\n", s1);
-						printf("Your opponents score is %s\n", s2);
+						printf("Your opponents score is %s\n\n", s2);
 					}
 					else
 					{
 						printf("Your score is: %s\n", s2);
-						printf("Your opponents score is %s\n", s1);
+						printf("Your opponents score is %s\n\n", s1);
 					}
 
 					//receiving random letters
@@ -331,7 +327,7 @@ int main()
 					memset(buffer, 0, 1024);
 					recv(clientSocket, buffer, 1024, 0);
 					printf("The letter you must use: %s\n", buffer);
-					
+
 					printf("Your word:\t");
 					scanf("%s", &buffer[0]);
 
@@ -351,6 +347,7 @@ int main()
 					{
 						printf("Your was Invalid! Shame!\n");
 					}
+					printf("waiting on opponent...\n");
 
 					
 				}
