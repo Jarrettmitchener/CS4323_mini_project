@@ -18,6 +18,16 @@
 
 #define MAX_NAME_LENGTH 256
 //define player structure 
+typedef struct{
+    char first_name[20];
+    char last_name[20];
+    char country[20];
+    char outcome[6];
+    int score;
+    int numWordsFound;
+    int numWordsAdded;
+} players;
+
 struct player{
     char first_name[20];
     char last_name[20];
@@ -259,7 +269,6 @@ void readScoresSingle(char* filename,struct player* newPlayer){
             fprintf(file, "%15d", p1->numWordsFound);
             fprintf(file, "%20d\n", p1->numWordsAdded);
             strcpy(flagname, p1->first_name);
-            printf("\n%s", flagname);
 
             continue;
         }
@@ -271,7 +280,6 @@ void readScoresSingle(char* filename,struct player* newPlayer){
             fprintf(file, "%15d", p2->numWordsFound);
             fprintf(file, "%20d\n", p2->numWordsAdded);
             strcpy(flagname, p2->first_name);
-            printf("\n%s", flagname);
             
             continue;
         }
@@ -283,7 +291,6 @@ void readScoresSingle(char* filename,struct player* newPlayer){
             fprintf(file, "%15d", p3->numWordsFound);
             fprintf(file, "%20d\n", p3->numWordsAdded);
             strcpy(flagname, p3->first_name);
-            printf("\n%s", flagname);
 
            continue;
         }
@@ -295,7 +302,6 @@ void readScoresSingle(char* filename,struct player* newPlayer){
             fprintf(file, "%15d", p4->numWordsFound);
             fprintf(file, "%20d\n", p4->numWordsAdded);
             strcpy(flagname, p4->first_name);
-            printf("\n%s", flagname);
  
             continue;
         }
@@ -307,7 +313,6 @@ void readScoresSingle(char* filename,struct player* newPlayer){
             fprintf(file, "%15d", p5->numWordsFound);
             fprintf(file, "%20d\n", p5->numWordsAdded);
             strcpy(flagname, p5->first_name);
-            printf("\n%s", flagname);
 
             continue;
         }
@@ -319,13 +324,26 @@ void readScoresSingle(char* filename,struct player* newPlayer){
             fprintf(file, "%15d", newPlayer->numWordsFound);
             fprintf(file, "%20d\n", newPlayer->numWordsAdded);
             strcpy(flagname, newPlayer->first_name);
-            printf("\n%s", flagname);
 
            continue;
         }
     }
 
+    
     fclose(file);
+
+    // printf("\n**************************************************SCOREBOARD**************************************************\n");
+    // printf(" First name  Last Name  Country  Score  Number of Words Found  Number of words addded in the dictionary\n");
+    // printf("------------------------------------------------------------------------------------------------------------\n");
+    
+    char header[1000];
+
+    file = fopen("singlePlayer.txt","r");
+    fscanf(file, "%[^\n]s",header);
+    printf("\n%s", header);
+    fclose(file);
+
+
 
 }
 
@@ -602,3 +620,4 @@ int main() {
 
     return 0;
 }
+
