@@ -1,3 +1,8 @@
+//Group Number: C
+//Name: Caleb Newport
+//Email: caleb.newport10@okstate.edu
+//Date: 2/28/2022
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
