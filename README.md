@@ -28,7 +28,7 @@ a word is correct and uses the scrambled letters in the input files.
 The server is the main hub for the other program files besides the client,
 as the client does no actual processing for the game or text files, it 
 is just designed to recieve input from the server and act accordingly.
-The server and client have a variable named "delay" which is used to 
+The server and client have a variable named "DELAY" which is used to 
 delay the send calls between them, as at least on my computer if there
 was no delay then it would often break the program. not sure if this is
 a gcc, socket, or cpu problem, possibly cpu since I run an amd 3600X 
